@@ -3,19 +3,19 @@
   "type": "module",
   "version": "6.12.1",
   "scripts": {
-    "dev": "astro dev",
-    "start": "astro dev",
-    "check": "astro check",
-    "build": "node scripts/generate-icons.js && npx tsx scripts/generate-lqips.ts && astro build && pagefind --site dist",
-    "preview": "astro preview",
-    "astro": "astro",
+    "dev": "node scripts/run-astro.js dev",
+    "start": "node scripts/run-astro.js dev",
+    "check": "node scripts/run-astro.js check",
+    "build": "node scripts/generate-icons.js && node scripts/generate-lqips.js && node scripts/run-astro.js build && pagefind --site dist",
+    "preview": "node scripts/run-astro.js preview",
+    "astro": "node scripts/run-astro.js",
     "type-check": "tsc --noEmit --isolatedDeclarations",
     "new-post": "node scripts/new-post.js",
     "format": "biome format --write ./src",
     "lint": "biome check --write ./src",
     "preinstall": "npx only-allow pnpm",
     "icons": "node scripts/generate-icons.js",
-    "lqips": "npx tsx scripts/generate-lqips.ts"
+    "lqips": "node scripts/generate-lqips.js"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.9",
