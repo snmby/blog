@@ -1,0 +1,442 @@
+
+--- 2026-06-15T15:49:43.341Z debug
+🪵  Writing logs to "D:\blog\.xdg\.wrangler\logs\wrangler-2026-06-15_15-49-43_200.log"
+---
+
+--- 2026-06-15T15:49:43.341Z debug
+.env file not found at "D:\blog\decap-auth\.env". Continuing... For more details, refer to https://developers.cloudflare.com/workers/wrangler/system-environment-variables/
+---
+
+--- 2026-06-15T15:49:43.342Z debug
+.env file not found at "D:\blog\decap-auth\.env.local". Continuing... For more details, refer to https://developers.cloudflare.com/workers/wrangler/system-environment-variables/
+---
+
+--- 2026-06-15T15:49:43.353Z log
+
+ ⛅️ wrangler 4.99.0 (update available 4.100.0)
+──────────────────────────────────────────────
+---
+
+--- 2026-06-15T15:49:43.370Z debug
+Running autoconfig detection in D:\blog\decap-auth...
+---
+
+--- 2026-06-15T15:49:43.372Z debug
+Metrics dispatcher: Posting data {"deviceId":"8783434c-e669-4398-9ef6-01d6e409dda2","event":"wrangler command started","timestamp":1781538583372,"properties":{"amplitude_session_id":1781538583361,"amplitude_event_id":0,"wranglerVersion":"4.99.0","wranglerMajorVersion":4,"wranglerMinorVersion":99,"wranglerPatchVersion":0,"osPlatform":"Windows","osVersion":"Windows 11 Pro","nodeVersion":24,"isFirstUsage":false,"configFileType":"jsonc","isCI":false,"isPagesCI":false,"isWorkersCI":false,"isInteractive":false,"hasAssets":false,"agent":"codex","argsUsed":["cwd","name","secretsFile"],"argsCombination":"cwd, name, secretsFile","sanitizedCommand":"deploy","sanitizedArgs":{},"currentAgentSkillsInstalled":"automatic"}}
+---
+
+--- 2026-06-15T15:49:43.378Z debug
+Metrics dispatcher: Posting data {"deviceId":"8783434c-e669-4398-9ef6-01d6e409dda2","event":"autoconfig_process_started","timestamp":1781538583378,"properties":{"amplitude_session_id":1781538583370,"amplitude_event_id":0,"wranglerVersion":"4.99.0","wranglerMajorVersion":4,"wranglerMinorVersion":99,"wranglerPatchVersion":0,"osPlatform":"Windows","osVersion":"Windows 11 Pro","nodeVersion":24,"isFirstUsage":false,"configFileType":"none","isCI":false,"isPagesCI":false,"isWorkersCI":false,"isInteractive":false,"hasAssets":false,"agent":"codex","category":"Workers","os":"win32:x64","autoConfigId":"d22f350e-fb11-4ba6-b1d7-836aa71220d3","command":"wrangler deploy","dryRun":false,"currentAgentSkillsInstalled":"automatic"}}
+---
+
+--- 2026-06-15T15:49:43.379Z debug
+Metrics dispatcher: Posting data {"deviceId":"8783434c-e669-4398-9ef6-01d6e409dda2","event":"autoconfig_detection_started","timestamp":1781538583379,"properties":{"amplitude_session_id":1781538583370,"amplitude_event_id":0,"wranglerVersion":"4.99.0","wranglerMajorVersion":4,"wranglerMinorVersion":99,"wranglerPatchVersion":0,"osPlatform":"Windows","osVersion":"Windows 11 Pro","nodeVersion":24,"isFirstUsage":false,"configFileType":"none","isCI":false,"isPagesCI":false,"isWorkersCI":false,"isInteractive":false,"hasAssets":false,"agent":"codex","category":"Workers","os":"win32:x64","autoConfigId":"d22f350e-fb11-4ba6-b1d7-836aa71220d3","command":"wrangler deploy","currentAgentSkillsInstalled":"automatic"}}
+---
+
+--- 2026-06-15T15:49:43.380Z debug
+Metrics dispatcher: Posting data {"deviceId":"8783434c-e669-4398-9ef6-01d6e409dda2","event":"autoconfig_process_ended","timestamp":1781538583380,"properties":{"amplitude_session_id":1781538583372,"amplitude_event_id":0,"wranglerVersion":"4.99.0","wranglerMajorVersion":4,"wranglerMinorVersion":99,"wranglerPatchVersion":0,"osPlatform":"Windows","osVersion":"Windows 11 Pro","nodeVersion":24,"isFirstUsage":false,"configFileType":"none","isCI":false,"isPagesCI":false,"isWorkersCI":false,"isInteractive":false,"hasAssets":false,"agent":"codex","category":"Workers","os":"win32:x64","autoConfigId":"d22f350e-fb11-4ba6-b1d7-836aa71220d3","command":"wrangler deploy","dryRun":false,"success":true,"currentAgentSkillsInstalled":"automatic"}}
+---
+
+--- 2026-06-15T15:49:43.453Z debug
+Starting verifyWorkerMatchesCITag() with tag: undefined, name: decap-auth-snmby
+---
+
+--- 2026-06-15T15:49:43.453Z debug
+No WRANGLER_CI_MATCH_TAG variable provided, aborting verifyWorkerMatchesCITag()
+---
+
+--- 2026-06-15T15:49:43.454Z debug
+-- START CF API REQUEST: GET https://api.cloudflare.com/client/v4/accounts/ab45611c4fa1255da4a4cf3963427974/workers/services/decap-auth-snmby
+---
+
+--- 2026-06-15T15:49:43.454Z debug
+QUERY STRING: omitted; set WRANGLER_LOG_SANITIZE=false to include sanitized data
+---
+
+--- 2026-06-15T15:49:43.454Z debug
+HEADERS: omitted; set WRANGLER_LOG_SANITIZE=false to include sanitized data
+---
+
+--- 2026-06-15T15:49:43.454Z debug
+INIT: omitted; set WRANGLER_LOG_SANITIZE=false to include sanitized data
+---
+
+--- 2026-06-15T15:49:43.454Z debug
+-- END CF API REQUEST
+---
+
+--- 2026-06-15T15:49:44.473Z debug
+-- START CF API RESPONSE: OK 200
+---
+
+--- 2026-06-15T15:49:44.474Z debug
+HEADERS: omitted; set WRANGLER_LOG_SANITIZE=false to include sanitized data
+---
+
+--- 2026-06-15T15:49:44.474Z debug
+RESPONSE: omitted; set WRANGLER_LOG_SANITIZE=false to include sanitized data
+---
+
+--- 2026-06-15T15:49:44.474Z debug
+-- END CF API RESPONSE
+---
+
+--- 2026-06-15T15:49:44.476Z debug
+-- START CF API REQUEST: GET https://api.cloudflare.com/client/v4/accounts/ab45611c4fa1255da4a4cf3963427974/workers/scripts/decap-auth-snmby/deployments
+---
+
+--- 2026-06-15T15:49:44.476Z debug
+QUERY STRING: omitted; set WRANGLER_LOG_SANITIZE=false to include sanitized data
+---
+
+--- 2026-06-15T15:49:44.476Z debug
+HEADERS: omitted; set WRANGLER_LOG_SANITIZE=false to include sanitized data
+---
+
+--- 2026-06-15T15:49:44.477Z debug
+INIT: omitted; set WRANGLER_LOG_SANITIZE=false to include sanitized data
+---
+
+--- 2026-06-15T15:49:44.477Z debug
+-- END CF API REQUEST
+---
+
+--- 2026-06-15T15:49:45.608Z debug
+-- START CF API RESPONSE: OK 200
+---
+
+--- 2026-06-15T15:49:45.608Z debug
+HEADERS: omitted; set WRANGLER_LOG_SANITIZE=false to include sanitized data
+---
+
+--- 2026-06-15T15:49:45.609Z debug
+RESPONSE: omitted; set WRANGLER_LOG_SANITIZE=false to include sanitized data
+---
+
+--- 2026-06-15T15:49:45.609Z debug
+-- END CF API RESPONSE
+---
+
+--- 2026-06-15T15:49:45.677Z log
+Total Upload: 25.33 KiB / gzip: 6.35 KiB
+---
+
+--- 2026-06-15T15:49:45.678Z debug
+-- START CF API REQUEST: GET https://api.cloudflare.com/client/v4/accounts/ab45611c4fa1255da4a4cf3963427974/workers/scripts/decap-auth-snmby/settings
+---
+
+--- 2026-06-15T15:49:45.678Z debug
+QUERY STRING: omitted; set WRANGLER_LOG_SANITIZE=false to include sanitized data
+---
+
+--- 2026-06-15T15:49:45.678Z debug
+HEADERS: omitted; set WRANGLER_LOG_SANITIZE=false to include sanitized data
+---
+
+--- 2026-06-15T15:49:45.678Z debug
+INIT: omitted; set WRANGLER_LOG_SANITIZE=false to include sanitized data
+---
+
+--- 2026-06-15T15:49:45.678Z debug
+-- END CF API REQUEST
+---
+
+--- 2026-06-15T15:49:47.219Z debug
+-- START CF API RESPONSE: OK 200
+---
+
+--- 2026-06-15T15:49:47.219Z debug
+HEADERS: omitted; set WRANGLER_LOG_SANITIZE=false to include sanitized data
+---
+
+--- 2026-06-15T15:49:47.219Z debug
+RESPONSE: omitted; set WRANGLER_LOG_SANITIZE=false to include sanitized data
+---
+
+--- 2026-06-15T15:49:47.219Z debug
+-- END CF API RESPONSE
+---
+
+--- 2026-06-15T15:49:47.221Z debug
+-- START CF API REQUEST: POST https://api.cloudflare.com/client/v4/accounts/ab45611c4fa1255da4a4cf3963427974/workers/scripts/decap-auth-snmby/versions
+---
+
+--- 2026-06-15T15:49:47.221Z debug
+QUERY STRING: omitted; set WRANGLER_LOG_SANITIZE=false to include sanitized data
+---
+
+--- 2026-06-15T15:49:47.221Z debug
+HEADERS: omitted; set WRANGLER_LOG_SANITIZE=false to include sanitized data
+---
+
+--- 2026-06-15T15:49:47.221Z debug
+INIT: omitted; set WRANGLER_LOG_SANITIZE=false to include sanitized data
+---
+
+--- 2026-06-15T15:49:47.222Z debug
+BODY: omitted; set WRANGLER_LOG_SANITIZE=false to include sanitized data
+---
+
+--- 2026-06-15T15:49:47.222Z debug
+-- END CF API REQUEST
+---
+
+--- 2026-06-15T15:49:48.634Z debug
+-- START CF API RESPONSE: OK 200
+---
+
+--- 2026-06-15T15:49:48.634Z debug
+HEADERS: omitted; set WRANGLER_LOG_SANITIZE=false to include sanitized data
+---
+
+--- 2026-06-15T15:49:48.634Z debug
+RESPONSE: omitted; set WRANGLER_LOG_SANITIZE=false to include sanitized data
+---
+
+--- 2026-06-15T15:49:48.634Z debug
+-- END CF API RESPONSE
+---
+
+--- 2026-06-15T15:49:48.634Z debug
+-- START CF API REQUEST: POST https://api.cloudflare.com/client/v4/accounts/ab45611c4fa1255da4a4cf3963427974/workers/scripts/decap-auth-snmby/deployments
+---
+
+--- 2026-06-15T15:49:48.634Z debug
+QUERY STRING: omitted; set WRANGLER_LOG_SANITIZE=false to include sanitized data
+---
+
+--- 2026-06-15T15:49:48.635Z debug
+HEADERS: omitted; set WRANGLER_LOG_SANITIZE=false to include sanitized data
+---
+
+--- 2026-06-15T15:49:48.635Z debug
+INIT: omitted; set WRANGLER_LOG_SANITIZE=false to include sanitized data
+---
+
+--- 2026-06-15T15:49:48.635Z debug
+-- END CF API REQUEST
+---
+
+--- 2026-06-15T15:49:49.127Z debug
+-- START CF API RESPONSE: OK 200
+---
+
+--- 2026-06-15T15:49:49.127Z debug
+HEADERS: omitted; set WRANGLER_LOG_SANITIZE=false to include sanitized data
+---
+
+--- 2026-06-15T15:49:49.127Z debug
+RESPONSE: omitted; set WRANGLER_LOG_SANITIZE=false to include sanitized data
+---
+
+--- 2026-06-15T15:49:49.128Z debug
+-- END CF API RESPONSE
+---
+
+--- 2026-06-15T15:49:49.129Z debug
+-- START CF API REQUEST: PATCH https://api.cloudflare.com/client/v4/accounts/ab45611c4fa1255da4a4cf3963427974/workers/scripts/decap-auth-snmby/script-settings
+---
+
+--- 2026-06-15T15:49:49.129Z debug
+QUERY STRING: omitted; set WRANGLER_LOG_SANITIZE=false to include sanitized data
+---
+
+--- 2026-06-15T15:49:49.129Z debug
+HEADERS: omitted; set WRANGLER_LOG_SANITIZE=false to include sanitized data
+---
+
+--- 2026-06-15T15:49:49.129Z debug
+INIT: omitted; set WRANGLER_LOG_SANITIZE=false to include sanitized data
+---
+
+--- 2026-06-15T15:49:49.129Z debug
+-- END CF API REQUEST
+---
+
+--- 2026-06-15T15:49:49.687Z debug
+-- START CF API RESPONSE: OK 200
+---
+
+--- 2026-06-15T15:49:49.687Z debug
+HEADERS: omitted; set WRANGLER_LOG_SANITIZE=false to include sanitized data
+---
+
+--- 2026-06-15T15:49:49.687Z debug
+RESPONSE: omitted; set WRANGLER_LOG_SANITIZE=false to include sanitized data
+---
+
+--- 2026-06-15T15:49:49.687Z debug
+-- END CF API RESPONSE
+---
+
+--- 2026-06-15T15:49:49.687Z log
+Worker Startup Time: 13 ms
+---
+
+--- 2026-06-15T15:49:49.688Z log
+Your Worker has access to the following bindings:
+---
+
+--- 2026-06-15T15:49:49.688Z log
+Binding                                    Resource                  
+---
+
+--- 2026-06-15T15:49:49.689Z log
+env.GITHUB_CLIENT_ID ("(hidden)")          Environment Variable      
+---
+
+--- 2026-06-15T15:49:49.689Z log
+env.GITHUB_CLIENT_SECRET ("(hidden)")      Environment Variable      
+---
+
+--- 2026-06-15T15:49:49.689Z log
+
+---
+
+--- 2026-06-15T15:49:49.689Z log
+Uploaded decap-auth-snmby (5.21 sec)
+---
+
+--- 2026-06-15T15:49:49.689Z debug
+-- START CF API REQUEST: GET https://api.cloudflare.com/client/v4/accounts/ab45611c4fa1255da4a4cf3963427974/workers/subdomain
+---
+
+--- 2026-06-15T15:49:49.690Z debug
+QUERY STRING: omitted; set WRANGLER_LOG_SANITIZE=false to include sanitized data
+---
+
+--- 2026-06-15T15:49:49.690Z debug
+HEADERS: omitted; set WRANGLER_LOG_SANITIZE=false to include sanitized data
+---
+
+--- 2026-06-15T15:49:49.690Z debug
+INIT: omitted; set WRANGLER_LOG_SANITIZE=false to include sanitized data
+---
+
+--- 2026-06-15T15:49:49.690Z debug
+-- END CF API REQUEST
+---
+
+--- 2026-06-15T15:49:50.020Z debug
+-- START CF API RESPONSE: OK 200
+---
+
+--- 2026-06-15T15:49:50.021Z debug
+HEADERS: omitted; set WRANGLER_LOG_SANITIZE=false to include sanitized data
+---
+
+--- 2026-06-15T15:49:50.021Z debug
+RESPONSE: omitted; set WRANGLER_LOG_SANITIZE=false to include sanitized data
+---
+
+--- 2026-06-15T15:49:50.021Z debug
+-- END CF API RESPONSE
+---
+
+--- 2026-06-15T15:49:50.021Z debug
+-- START CF API REQUEST: GET https://api.cloudflare.com/client/v4/accounts/ab45611c4fa1255da4a4cf3963427974/workers/scripts/decap-auth-snmby/subdomain
+---
+
+--- 2026-06-15T15:49:50.021Z debug
+QUERY STRING: omitted; set WRANGLER_LOG_SANITIZE=false to include sanitized data
+---
+
+--- 2026-06-15T15:49:50.021Z debug
+HEADERS: omitted; set WRANGLER_LOG_SANITIZE=false to include sanitized data
+---
+
+--- 2026-06-15T15:49:50.021Z debug
+INIT: omitted; set WRANGLER_LOG_SANITIZE=false to include sanitized data
+---
+
+--- 2026-06-15T15:49:50.021Z debug
+-- END CF API REQUEST
+---
+
+--- 2026-06-15T15:49:50.362Z debug
+-- START CF API RESPONSE: OK 200
+---
+
+--- 2026-06-15T15:49:50.362Z debug
+HEADERS: omitted; set WRANGLER_LOG_SANITIZE=false to include sanitized data
+---
+
+--- 2026-06-15T15:49:50.362Z debug
+RESPONSE: omitted; set WRANGLER_LOG_SANITIZE=false to include sanitized data
+---
+
+--- 2026-06-15T15:49:50.362Z debug
+-- END CF API RESPONSE
+---
+
+--- 2026-06-15T15:49:50.363Z debug
+-- START CF API REQUEST: POST https://api.cloudflare.com/client/v4/accounts/ab45611c4fa1255da4a4cf3963427974/workers/scripts/decap-auth-snmby/subdomain
+---
+
+--- 2026-06-15T15:49:50.363Z debug
+QUERY STRING: omitted; set WRANGLER_LOG_SANITIZE=false to include sanitized data
+---
+
+--- 2026-06-15T15:49:50.363Z debug
+HEADERS: omitted; set WRANGLER_LOG_SANITIZE=false to include sanitized data
+---
+
+--- 2026-06-15T15:49:50.363Z debug
+INIT: omitted; set WRANGLER_LOG_SANITIZE=false to include sanitized data
+---
+
+--- 2026-06-15T15:49:50.363Z debug
+-- END CF API REQUEST
+---
+
+--- 2026-06-15T15:49:51.421Z debug
+-- START CF API RESPONSE: OK 200
+---
+
+--- 2026-06-15T15:49:51.421Z debug
+HEADERS: omitted; set WRANGLER_LOG_SANITIZE=false to include sanitized data
+---
+
+--- 2026-06-15T15:49:51.421Z debug
+RESPONSE: omitted; set WRANGLER_LOG_SANITIZE=false to include sanitized data
+---
+
+--- 2026-06-15T15:49:51.421Z debug
+-- END CF API RESPONSE
+---
+
+--- 2026-06-15T15:49:51.505Z warn
+▲ [WARNING] Because 'workers_dev' is not in your Wrangler file, it will be enabled for this deployment by default.
+
+  To override this setting, you can disable workers.dev by explicitly setting 'workers_dev = false' in your Wrangler file.
+
+
+---
+
+--- 2026-06-15T15:49:51.506Z warn
+▲ [WARNING] Because your 'workers.dev' route is enabled and your 'preview_urls' setting is not in your Wrangler file, Preview URLs will be enabled for this deployment by default.
+
+  To override this setting, you can disable Preview URLs by explicitly setting 'preview_urls = false' in your Wrangler file.
+
+
+---
+
+--- 2026-06-15T15:49:51.506Z log
+Deployed decap-auth-snmby triggers (1.82 sec)
+---
+
+--- 2026-06-15T15:49:51.506Z log
+  https://decap-auth-snmby.snmby-blog.workers.dev
+---
+
+--- 2026-06-15T15:49:51.506Z log
+Current Version ID: e632bba8-73e7-4dee-89b1-e5a7bde5f3be
+---
+
+--- 2026-06-15T15:49:51.509Z debug
+Metrics dispatcher: Posting data {"deviceId":"8783434c-e669-4398-9ef6-01d6e409dda2","event":"deploy worker script","timestamp":1781538591509,"properties":{"amplitude_session_id":1781538591506,"amplitude_event_id":0,"wranglerVersion":"4.99.0","wranglerMajorVersion":4,"wranglerMinorVersion":99,"wranglerPatchVersion":0,"osPlatform":"Windows","osVersion":"Windows 11 Pro","nodeVersion":24,"isFirstUsage":false,"configFileType":"none","isCI":false,"isPagesCI":false,"isWorkersCI":false,"isInteractive":false,"hasAssets":false,"agent":"codex","category":"Workers","os":"win32:x64","usesTypeScript":true,"durationMs":8054,"currentAgentSkillsInstalled":"automatic"}}
+---
+
+--- 2026-06-15T15:49:51.511Z debug
+Metrics dispatcher: Posting data {"deviceId":"8783434c-e669-4398-9ef6-01d6e409dda2","event":"wrangler command completed","timestamp":1781538591511,"properties":{"amplitude_session_id":1781538583361,"amplitude_event_id":1,"wranglerVersion":"4.99.0","wranglerMajorVersion":4,"wranglerMinorVersion":99,"wranglerPatchVersion":0,"osPlatform":"Windows","osVersion":"Windows 11 Pro","nodeVersion":24,"isFirstUsage":false,"configFileType":"jsonc","isCI":false,"isPagesCI":false,"isWorkersCI":false,"isInteractive":false,"hasAssets":false,"agent":"codex","argsUsed":["cwd","name","secretsFile"],"argsCombination":"cwd, name, secretsFile","sanitizedCommand":"deploy","sanitizedArgs":{},"durationMs":8165,"currentAgentSkillsInstalled":"automatic"}}
+---

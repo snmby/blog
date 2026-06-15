@@ -1,0 +1,60 @@
+
+--- 2026-06-15T15:29:57.705Z debug
+🪵  Writing logs to "D:\blog\.xdg\.wrangler\logs\wrangler-2026-06-15_15-29-57_568.log"
+---
+
+--- 2026-06-15T15:29:57.705Z debug
+.env file not found at "D:\blog\decap-auth\.env". Continuing... For more details, refer to https://developers.cloudflare.com/workers/wrangler/system-environment-variables/
+---
+
+--- 2026-06-15T15:29:57.706Z debug
+.env file not found at "D:\blog\decap-auth\.env.local". Continuing... For more details, refer to https://developers.cloudflare.com/workers/wrangler/system-environment-variables/
+---
+
+--- 2026-06-15T15:29:57.711Z log
+
+ ⛅️ wrangler 4.99.0 (update available 4.100.0)
+──────────────────────────────────────────────
+---
+
+--- 2026-06-15T15:29:57.724Z log
+Attempting to login via OAuth...
+---
+
+--- 2026-06-15T15:29:57.726Z debug
+Metrics dispatcher: Posting data {"deviceId":"8783434c-e669-4398-9ef6-01d6e409dda2","event":"wrangler command started","timestamp":1781537397725,"properties":{"amplitude_session_id":1781537397717,"amplitude_event_id":0,"wranglerVersion":"4.99.0","wranglerMajorVersion":4,"wranglerMinorVersion":99,"wranglerPatchVersion":0,"osPlatform":"Windows","osVersion":"Windows 11 Pro","nodeVersion":24,"isFirstUsage":false,"configFileType":"jsonc","isCI":false,"isPagesCI":false,"isWorkersCI":false,"isInteractive":true,"hasAssets":false,"agent":null,"argsUsed":[],"argsCombination":"","sanitizedCommand":"login","sanitizedArgs":{},"currentAgentSkillsInstalled":null}}
+---
+
+--- 2026-06-15T15:29:57.739Z log
+Opening a link in your default browser: https://dash.cloudflare.com/oauth2/auth?response_type=code&client_id=54d11594-84e4-41aa-b438-e81b8fa78ee7&redirect_uri=http%3A%2F%2Flocalhost%3A8976%2Foauth%2Fcallback&scope=account%3Aread%20user%3Aread%20workers%3Awrite%20workers_kv%3Awrite%20workers_routes%3Awrite%20workers_scripts%3Awrite%20workers_tail%3Aread%20d1%3Awrite%20pages%3Awrite%20zone%3Aread%20ssl_certs%3Awrite%20ai%3Awrite%20ai-search%3Awrite%20ai-search%3Arun%20websearch.run%20agent-memory%3Awrite%20queues%3Awrite%20pipelines%3Awrite%20secrets_store%3Awrite%20artifacts%3Awrite%20flagship%3Awrite%20containers%3Awrite%20cloudchamber%3Awrite%20connectivity%3Aadmin%20email_routing%3Awrite%20email_sending%3Awrite%20browser%3Awrite%20offline_access&state=T9hO6KFEpjgSj~skK3KDGiqUGMJmu9WW&code_challenge=YWJ68QtFwq3ed36Pr0ukSBcqTs--Q8ftF9K1Ew4DsYc&code_challenge_method=S256
+---
+
+--- 2026-06-15T15:29:57.763Z log
+
+---
+
+--- 2026-06-15T15:29:57.843Z error
+✘ [ERROR] Error: Consent denied. You must grant consent to Wrangler in order to login.
+
+  If you don't want to do this consider passing an API token via the `CLOUDFLARE_API_TOKEN`
+  environment variable
+
+
+---
+
+--- 2026-06-15T15:29:57.844Z debug
+Error: Error: Consent denied. You must grant consent to Wrangler in order to login.
+If you don't want to do this consider passing an API token via the `CLOUDFLARE_API_TOKEN` environment variable
+    at ServerResponse.<anonymous> (D:\blog\node_modules\.pnpm\wrangler@4.99.0\node_modules\wrangler\wrangler-dist\cli.js:77987:19)
+    at Object.onceWrapper (node:events:630:28)
+    at ServerResponse.emit (node:events:521:24)
+    at ServerResponse.emit (node:domain:489:12)
+    at onFinish (node:_http_outgoing:1026:10)
+    at afterWrite (node:internal/streams/writable:708:5)
+    at afterWriteTick (node:internal/streams/writable:694:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+---
+
+--- 2026-06-15T15:29:57.844Z debug
+Metrics dispatcher: Posting data {"deviceId":"8783434c-e669-4398-9ef6-01d6e409dda2","event":"wrangler command errored","timestamp":1781537397844,"properties":{"amplitude_session_id":1781537397717,"amplitude_event_id":1,"wranglerVersion":"4.99.0","wranglerMajorVersion":4,"wranglerMinorVersion":99,"wranglerPatchVersion":0,"osPlatform":"Windows","osVersion":"Windows 11 Pro","nodeVersion":24,"isFirstUsage":false,"configFileType":"jsonc","isCI":false,"isPagesCI":false,"isWorkersCI":false,"isInteractive":true,"hasAssets":false,"agent":null,"argsUsed":[],"argsCombination":"","sanitizedCommand":"login","sanitizedArgs":{},"durationMs":56,"errorType":"UserError","errorMessage":"user oauth consent denied","currentAgentSkillsInstalled":null}}
+---

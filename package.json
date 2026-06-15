@@ -1,5 +1,5 @@
 {
-  "name": "firefly",
+  "name": "snmby-blog",
   "type": "module",
   "version": "6.12.1",
   "scripts": {
@@ -46,6 +46,7 @@
     "astro-icon": "^1.1.5",
     "ci-info": "^4.4.0",
     "dayjs": "^1.11.21",
+    "decap-cms": "^3.14.1",
     "expressive-code-collapsible": "^0.1.0",
     "expressive-code-language-badge": "^1.1.0",
     "glob": "^11.1.0",

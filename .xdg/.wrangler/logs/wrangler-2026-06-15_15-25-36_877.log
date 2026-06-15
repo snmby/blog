@@ -1,0 +1,59 @@
+
+--- 2026-06-15T15:25:37.010Z debug
+🪵  Writing logs to "D:\blog\.xdg\.wrangler\logs\wrangler-2026-06-15_15-25-36_877.log"
+---
+
+--- 2026-06-15T15:25:37.010Z debug
+.env file not found at "D:\blog\decap-auth\.env". Continuing... For more details, refer to https://developers.cloudflare.com/workers/wrangler/system-environment-variables/
+---
+
+--- 2026-06-15T15:25:37.011Z debug
+.env file not found at "D:\blog\decap-auth\.env.local". Continuing... For more details, refer to https://developers.cloudflare.com/workers/wrangler/system-environment-variables/
+---
+
+--- 2026-06-15T15:25:37.118Z log
+
+ ⛅️ wrangler 4.99.0
+───────────────────
+---
+
+--- 2026-06-15T15:25:56.669Z log
+Successfully installed Cloudflare skills for: Claude Code, Codex.
+---
+
+--- 2026-06-15T15:25:56.674Z debug
+Metrics dispatcher: Posting data {"deviceId":"8783434c-e669-4398-9ef6-01d6e409dda2","event":"skills_install_completed","timestamp":1781537156673,"properties":{"amplitude_session_id":1781537156670,"amplitude_event_id":0,"wranglerVersion":"4.99.0","wranglerMajorVersion":4,"wranglerMinorVersion":99,"wranglerPatchVersion":0,"osPlatform":"Windows","osVersion":"Windows 11 Pro","nodeVersion":24,"isFirstUsage":true,"configFileType":"none","isCI":false,"isPagesCI":false,"isWorkersCI":false,"isInteractive":true,"hasAssets":false,"agent":null,"category":"Workers","os":"win32:x64","agents":[{"name":"Claude Code","rosie":{"id":"claude","globalPath":"C:\\Users\\25518\\.claude\\skills"}},{"name":"Codex","rosie":{"id":"codex","globalPath":"C:\\Users\\25518\\.codex\\skills"}}],"currentAgentSkillsInstalled":null}}
+---
+
+--- 2026-06-15T15:25:56.689Z log
+Attempting to login via OAuth...
+---
+
+--- 2026-06-15T15:25:56.692Z debug
+Metrics dispatcher: Posting data {"deviceId":"8783434c-e669-4398-9ef6-01d6e409dda2","event":"wrangler command started","timestamp":1781537156691,"properties":{"amplitude_session_id":1781537156682,"amplitude_event_id":0,"wranglerVersion":"4.99.0","wranglerMajorVersion":4,"wranglerMinorVersion":99,"wranglerPatchVersion":0,"osPlatform":"Windows","osVersion":"Windows 11 Pro","nodeVersion":24,"isFirstUsage":false,"configFileType":"jsonc","isCI":false,"isPagesCI":false,"isWorkersCI":false,"isInteractive":true,"hasAssets":false,"agent":null,"argsUsed":[],"argsCombination":"","sanitizedCommand":"login","sanitizedArgs":{},"currentAgentSkillsInstalled":null}}
+---
+
+--- 2026-06-15T15:25:56.694Z log
+Opening a link in your default browser: https://dash.cloudflare.com/oauth2/auth?response_type=code&client_id=54d11594-84e4-41aa-b438-e81b8fa78ee7&redirect_uri=http%3A%2F%2Flocalhost%3A8976%2Foauth%2Fcallback&scope=account%3Aread%20user%3Aread%20workers%3Awrite%20workers_kv%3Awrite%20workers_routes%3Awrite%20workers_scripts%3Awrite%20workers_tail%3Aread%20d1%3Awrite%20pages%3Awrite%20zone%3Aread%20ssl_certs%3Awrite%20ai%3Awrite%20ai-search%3Awrite%20ai-search%3Arun%20websearch.run%20agent-memory%3Awrite%20queues%3Awrite%20pipelines%3Awrite%20secrets_store%3Awrite%20artifacts%3Awrite%20flagship%3Awrite%20containers%3Awrite%20cloudchamber%3Awrite%20connectivity%3Aadmin%20email_routing%3Awrite%20email_sending%3Awrite%20browser%3Awrite%20offline_access&state=Eri_-L95p3_Vm-HsYlPinOI89GpIQz8x&code_challenge=X4vXsr2-TDylYNqRxyZ6IWosfbJalO4LtL-Ci_iCnfI&code_challenge_method=S256
+---
+
+--- 2026-06-15T15:27:56.698Z log
+
+---
+
+--- 2026-06-15T15:27:56.779Z error
+✘ [ERROR] Timed out waiting for authorization code, please try again.
+
+
+---
+
+--- 2026-06-15T15:27:56.780Z debug
+Error: Timed out waiting for authorization code, please try again.
+    at Timeout.<anonymous> (D:\blog\node_modules\.pnpm\wrangler@4.99.0\node_modules\wrangler\wrangler-dist\cli.js:77906:9)
+    at listOnTimeout (node:internal/timers:605:17)
+    at process.processTimers (node:internal/timers:541:7)
+---
+
+--- 2026-06-15T15:27:56.780Z debug
+Metrics dispatcher: Posting data {"deviceId":"8783434c-e669-4398-9ef6-01d6e409dda2","event":"wrangler command errored","timestamp":1781537276780,"properties":{"amplitude_session_id":1781537156682,"amplitude_event_id":1,"wranglerVersion":"4.99.0","wranglerMajorVersion":4,"wranglerMinorVersion":99,"wranglerPatchVersion":0,"osPlatform":"Windows","osVersion":"Windows 11 Pro","nodeVersion":24,"isFirstUsage":false,"configFileType":"jsonc","isCI":false,"isPagesCI":false,"isWorkersCI":false,"isInteractive":true,"hasAssets":false,"agent":null,"argsUsed":[],"argsCombination":"","sanitizedCommand":"login","sanitizedArgs":{},"durationMs":139685,"errorType":"UserError","errorMessage":"user oauth authorization timeout","currentAgentSkillsInstalled":null}}
+---

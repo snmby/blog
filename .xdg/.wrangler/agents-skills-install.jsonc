@@ -1,0 +1,22 @@
+{
+	"version": 1,
+	"accepted": true,
+	"date": "2026-06-15T15:25:56.670Z",
+	"detectedAgents": [
+		{
+			"name": "Claude Code",
+			"rosie": {
+				"id": "claude",
+				"globalPath": "C:\\Users\\25518\\.claude\\skills"
+			}
+		},
+		{
+			"name": "Codex",
+			"rosie": {
+				"id": "codex",
+				"globalPath": "C:\\Users\\25518\\.codex\\skills"
+			}
+		}
+	],
+	"installFailed": false
+}
