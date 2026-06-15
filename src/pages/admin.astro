@@ -1,0 +1,45 @@
+---
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>后台管理</title>
+    <link rel="icon" href="/favicon/favicon.ico" />
+    <style>
+      html,
+      body {
+        margin: 0;
+        min-height: 100%;
+        background: #0b1020;
+        color: #e5e7eb;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      body {
+        padding: 24px;
+      }
+
+      #nc-root {
+        min-height: calc(100vh - 48px);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="nc-root"></div>
+    <script>
+      window.CMS_MANUAL_INIT = true;
+      window.CMS_CONFIG = "/admin/config.yml";
+    </script>
+    <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+    <script>
+      window.addEventListener("load", () => {
+        if (window.CMS) {
+          window.CMS.init();
+        }
+      });
+    </script>
+  </body>
+</html>
