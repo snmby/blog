@@ -54,7 +54,9 @@ const adapter = process.env.CF_WORKERS
 export default defineConfig({
 	site: siteConfig.site_url,
 
-	base: "/",
+	base: process.env.GITHUB_PAGES
+		? "/blog/"
+		: process.env.ASTRO_BASE || "/",
 	trailingSlash: "always",
 
 	adapter,
@@ -302,4 +304,3 @@ export default defineConfig({
 		},
 	},
 });
-
