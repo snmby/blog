@@ -14,7 +14,7 @@ import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeComponents from "rehype-components"; /* Render the custom directive content */
 import rehypeKatex from "rehype-katex";
 import "katex/dist/contrib/mhchem.mjs"; // 加载 mhchem 扩展
-import cloudflare from "@astrojs/cloudflare";
+import edgeoneAdapter from "@edgeone/astro";
 import mdx from "@astrojs/mdx";
 import { pluginCollapsible } from "expressive-code-collapsible"; /* Collapsible */
 import { pluginLanguageBadge } from "expressive-code-language-badge"; /* Language Badge */
@@ -44,12 +44,6 @@ if (process.env.NODE_ENV === "development") {
 	setMaxListeners(20);
 }
 
-const adapter = process.env.CF_WORKERS
-	? cloudflare({
-			prerenderEnvironment: "node",
-		})
-	: undefined;
-
 // https://astro.build/config
 export default defineConfig({
 	site: siteConfig.site_url,
@@ -59,7 +53,8 @@ export default defineConfig({
 		: process.env.ASTRO_BASE || "/",
 	trailingSlash: "always",
 
-	adapter,
+	output: "static",
+	adapter: edgeoneAdapter(),
 
 	// 图像优化配置
 	image: {
@@ -119,13 +114,11 @@ export default defineConfig({
 			useDarkModeMediaQuery: false,
 			themeCssSelector: (theme) => `[data-theme='${theme.name}']`,
 			plugins: [
-				// pluginLanguageBadge 配置 - 从expressiveCodeConfig读取设置
 				...(expressiveCodeConfig.pluginLanguageBadge?.enable === true
 					? [pluginLanguageBadge()]
 					: []),
 				pluginCollapsibleSections(),
 				pluginLineNumbers(),
-				// pluginCollapsible 配置 - 从expressiveCodeConfig读取设置，使用i18n文本
 				...(expressiveCodeConfig.pluginCollapsible?.enable === true
 					? [
 							pluginCollapsible({
@@ -180,7 +173,6 @@ export default defineConfig({
 		svelte(),
 		sitemap({
 			filter: (page) => {
-				// 根据页面开关配置过滤sitemap
 				const url = new URL(page);
 				const pathname = url.pathname;
 
@@ -229,7 +221,7 @@ export default defineConfig({
 				rehypePlantuml,
 				rehypeFigure,
 				[rehypeExternalLinks, { siteUrl: siteConfig.site_url }],
-				[rehypeEmailProtection, { method: "base64" }], // 邮箱保护插件，支持 'base64' 或 'rot13'
+				[rehypeEmailProtection, { method: "base64" }],
 				[
 					rehypeComponents,
 					{
@@ -280,14 +272,11 @@ export default defineConfig({
 			minify: "esbuild",
 			esbuildOptions: {
 				minify: true,
-				// 删除 debugger 语句；console.log / console.debug 无副作用，未使用返回值时会被 dead code elimination 移除，
-				// console.warn / console.error 保留，确保生产环境出错时仍有日志可查
 				drop: ["debugger"],
 				pure: ["console.log", "console.debug"],
 			},
 			rollupOptions: {
 				onwarn(warning, warn) {
-					// temporarily suppress this warning
 					if (
 						warning.message.includes("is dynamically imported by") &&
 						warning.message.includes("but also statically imported by")
@@ -297,7 +286,6 @@ export default defineConfig({
 					warn(warning);
 				},
 			},
-			// CSS 优化
 			cssCodeSplit: true,
 			cssMinify: "esbuild",
 			assetsInlineLimit: 4096,
