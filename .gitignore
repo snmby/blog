@@ -1,6 +1,6 @@
 # build output
 dist/
-.edgeone/
+# .edgeone/ -- 本地构建后提交，EdgeOne 跳过构建直接部署
 
 # generated types
 .astro/
