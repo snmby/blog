@@ -1,4 +1,6 @@
 import { spawn } from "node:child_process";
+import { fileURLToPath } from "node:url";
+import path from "node:path";
 
 const args = process.argv.slice(2);
 
@@ -7,7 +9,10 @@ if (args.length === 0) {
 	process.exit(1);
 }
 
-const child = spawn("npx", ["astro", ...args], {
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const astroBin = path.resolve(__dirname, "..", "node_modules", ".bin", "astro");
+
+const child = spawn(astroBin, args, {
 	stdio: "inherit",
 	env: {
 		...process.env,
