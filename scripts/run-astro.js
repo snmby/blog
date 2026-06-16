@@ -7,7 +7,7 @@ if (args.length === 0) {
 	process.exit(1);
 }
 
-const child = spawn("astro", args, {
+const child = spawn("npx", ["astro", ...args], {
 	stdio: "inherit",
 	env: {
 		...process.env,
