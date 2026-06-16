@@ -6,7 +6,7 @@
     "dev": "node scripts/run-astro.js dev",
     "start": "node scripts/run-astro.js dev",
     "check": "node scripts/run-astro.js check",
-    "build": "node scripts/generate-icons.js && node scripts/generate-lqips.js && node scripts/run-astro.js build && ./node_modules/.bin/pagefind --site .edgeone/assets",
+    "build": "node scripts/generate-icons.js && node scripts/generate-lqips.js && node scripts/run-astro.js build && ./node_modules/.bin/pagefind --site dist",
     "preview": "node scripts/run-astro.js preview",
     "astro": "node scripts/run-astro.js",
     "type-check": "tsc --noEmit --isolatedDeclarations",

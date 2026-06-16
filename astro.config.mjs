@@ -11,17 +11,16 @@ import expressiveCode from "astro-expressive-code";
 import icon from "astro-icon";
 import katex from "katex";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
-import rehypeComponents from "rehype-components"; /* Render the custom directive content */
+import rehypeComponents from "rehype-components";
 import rehypeKatex from "rehype-katex";
-import "katex/dist/contrib/mhchem.mjs"; // 加载 mhchem 扩展
-import edgeoneAdapter from "@edgeone/astro";
+import "katex/dist/contrib/mhchem.mjs";
 import mdx from "@astrojs/mdx";
-import { pluginCollapsible } from "expressive-code-collapsible"; /* Collapsible */
-import { pluginLanguageBadge } from "expressive-code-language-badge"; /* Language Badge */
+import { pluginCollapsible } from "expressive-code-collapsible";
+import { pluginLanguageBadge } from "expressive-code-language-badge";
 import rehypeCallouts from "rehype-callouts";
 import rehypeSlug from "rehype-slug";
 import remarkAdmonitionToBlockquoteCallout from "remark-admonition-to-blockquote-callout";
-import remarkDirective from "remark-directive"; /* Handle directives */
+import remarkDirective from "remark-directive";
 import remarkMath from "remark-math";
 import remarkSectionize from "remark-sectionize";
 import { expressiveCodeConfig, plantumlConfig, siteConfig } from "./src/config";
@@ -54,27 +53,20 @@ export default defineConfig({
 	trailingSlash: "always",
 
 	output: "static",
-	adapter: edgeoneAdapter(),
 
-	// 图像优化配置
 	image: {
-		// 全局响应式布局
 		layout: "constrained",
 	},
 
 	experimental: {
-		// Rust 编译器以提升构建性能（实验性），部分平台可能会导致构建失败，可以根据需要启用或禁用
 		rustCompiler: false,
-		// 队列渲染以优化性能（实验性）
 		queuedRendering: { enabled: true },
 	},
 
 	integrations: [
 		swup({
 			theme: false,
-			animationClass: "transition-swup-", // see https://swup.js.org/options/#animationselector
-			// the default value `transition-` cause transition delay
-			// when the Tailwind class `transition-all` is used
+			animationClass: "transition-swup-",
 			containers: [
 				"#banner-overlay-container",
 				"#banner-dim-container",
@@ -90,11 +82,9 @@ export default defineConfig({
 			updateHead: true,
 			updateBodyClass: false,
 			globalInstance: true,
-			// 滚动相关配置优化
 			resolveUrl: (url) => url,
 			animateHistoryBrowsing: false,
 			skipPopStateHandling: (event) => {
-				// 跳过锚点链接的处理，让浏览器原生处理
 				return event.state?.url?.includes("#");
 			},
 		}),
@@ -122,13 +112,9 @@ export default defineConfig({
 				...(expressiveCodeConfig.pluginCollapsible?.enable === true
 					? [
 							pluginCollapsible({
-								lineThreshold:
-									expressiveCodeConfig.pluginCollapsible.lineThreshold || 15,
-								previewLines:
-									expressiveCodeConfig.pluginCollapsible.previewLines || 8,
-								defaultCollapsed:
-									expressiveCodeConfig.pluginCollapsible.defaultCollapsed ??
-									true,
+								lineThreshold: expressiveCodeConfig.pluginCollapsible.lineThreshold || 15,
+								previewLines: expressiveCodeConfig.pluginCollapsible.previewLines || 8,
+								defaultCollapsed: expressiveCodeConfig.pluginCollapsible.defaultCollapsed ?? true,
 								expandButtonText: i18n(I18nKey.codeCollapsibleShowMore),
 								collapseButtonText: i18n(I18nKey.codeCollapsibleShowLess),
 								expandedAnnouncement: i18n(I18nKey.codeCollapsibleExpanded),
@@ -137,61 +123,28 @@ export default defineConfig({
 						]
 					: []),
 			],
-			defaultProps: {
-				wrap: false,
-				overridesByLang: {
-					shellsession: {
-						showLineNumbers: false,
-					},
-				},
-			},
+			defaultProps: { wrap: false, overridesByLang: { shellsession: { showLineNumbers: false } } },
 			styleOverrides: {
 				borderRadius: "0.75rem",
 				codeFontSize: "0.875rem",
-				codeFontFamily:
-					"'JetBrains Mono Variable', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
+				codeFontFamily: "'JetBrains Mono Variable', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
 				codeLineHeight: "1.5rem",
 				frames: {},
-				textMarkers: {
-					delHue: 0,
-					insHue: 180,
-					markHue: 250,
-				},
-				languageBadge: {
-					fontSize: "0.75rem",
-					fontWeight: "bold",
-					borderRadius: "0.25rem",
-					opacity: "1",
-					borderWidth: "0px",
-					borderColor: "transparent",
-				},
+				textMarkers: { delHue: 0, insHue: 180, markHue: 250 },
+				languageBadge: { fontSize: "0.75rem", fontWeight: "bold", borderRadius: "0.25rem", opacity: "1", borderWidth: "0px", borderColor: "transparent" },
 			},
-			frames: {
-				showCopyToClipboardButton: true,
-			},
+			frames: { showCopyToClipboardButton: true },
 		}),
 		svelte(),
 		sitemap({
 			filter: (page) => {
 				const url = new URL(page);
 				const pathname = url.pathname;
-
-				if (pathname === "/friends/" && !siteConfig.pages.friends) {
-					return false;
-				}
-				if (pathname === "/sponsor/" && !siteConfig.pages.sponsor) {
-					return false;
-				}
-				if (pathname === "/guestbook/" && !siteConfig.pages.guestbook) {
-					return false;
-				}
-				if (pathname === "/bangumi/" && !siteConfig.pages.bangumi) {
-					return false;
-				}
-				if (pathname === "/gallery/" && !siteConfig.pages.gallery) {
-					return false;
-				}
-
+				if (pathname === "/friends/" && !siteConfig.pages.friends) return false;
+				if (pathname === "/sponsor/" && !siteConfig.pages.sponsor) return false;
+				if (pathname === "/guestbook/" && !siteConfig.pages.guestbook) return false;
+				if (pathname === "/bangumi/" && !siteConfig.pages.bangumi) return false;
+				if (pathname === "/gallery/" && !siteConfig.pages.gallery) return false;
 				return true;
 			},
 		}),
@@ -200,9 +153,7 @@ export default defineConfig({
 	markdown: {
 		processor: unified({
 			remarkPlugins: [
-				...(siteConfig.post.rehypeCallouts.enablePythonMarkdownAdmonitions !== false
-					? [remarkAdmonitionToBlockquoteCallout]
-					: []),
+				...(siteConfig.post.rehypeCallouts.enablePythonMarkdownAdmonitions !== false ? [remarkAdmonitionToBlockquoteCallout] : []),
 				remarkMath,
 				remarkReadingTime,
 				remarkImageGrid,
@@ -222,67 +173,25 @@ export default defineConfig({
 				rehypeFigure,
 				[rehypeExternalLinks, { siteUrl: siteConfig.site_url }],
 				[rehypeEmailProtection, { method: "base64" }],
-				[
-					rehypeComponents,
-					{
-						components: {
-							github: GithubCardComponent,
-						},
-					},
-				],
-				[
-					rehypeAutolinkHeadings,
-					{
-						behavior: "append",
-						properties: {
-							className: ["anchor"],
-						},
-						content: {
-							type: "element",
-							tagName: "span",
-							properties: {
-								className: ["anchor-icon"],
-								"data-pagefind-ignore": true,
-							},
-							children: [
-								{
-									type: "text",
-									value: "#",
-								},
-							],
-						},
-					},
-				],
+				[rehypeComponents, { components: { github: GithubCardComponent } }],
+				[rehypeAutolinkHeadings, {
+					behavior: "append",
+					properties: { className: ["anchor"] },
+					content: { type: "element", tagName: "span", properties: { className: ["anchor-icon"], "data-pagefind-ignore": true }, children: [{ type: "text", value: "#" }] },
+				}],
 			],
 		}),
 	},
 	vite: {
 		plugins: [tailwindcss()],
-		server: {
-			watch: {
-				ignored: ["**/package/**", "**/Firefly-docs/**"],
-			},
-		},
-		resolve: {
-			alias: {
-				"@rehype-callouts-theme": `rehype-callouts/theme/${siteConfig.post.rehypeCallouts.theme}`,
-			},
-		},
+		server: { watch: { ignored: ["**/package/**", "**/Firefly-docs/**"] } },
+		resolve: { alias: { "@rehype-callouts-theme": `rehype-callouts/theme/${siteConfig.post.rehypeCallouts.theme}` } },
 		build: {
 			minify: "esbuild",
-			esbuildOptions: {
-				minify: true,
-				drop: ["debugger"],
-				pure: ["console.log", "console.debug"],
-			},
+			esbuildOptions: { minify: true, drop: ["debugger"], pure: ["console.log", "console.debug"] },
 			rollupOptions: {
 				onwarn(warning, warn) {
-					if (
-						warning.message.includes("is dynamically imported by") &&
-						warning.message.includes("but also statically imported by")
-					) {
-						return;
-					}
+					if (warning.message.includes("is dynamically imported by") && warning.message.includes("but also statically imported by")) return;
 					warn(warning);
 				},
 			},
