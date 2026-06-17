@@ -1,7 +1,7 @@
 {
   "name": "snmby-blog",
   "type": "module",
-  "version": "6.12.1",
+  "version": "0.0.1",
   "scripts": {
     "dev": "node scripts/run-astro.js dev",
     "start": "node scripts/run-astro.js dev",

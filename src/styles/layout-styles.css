@@ -399,10 +399,10 @@ html.is-page-transitioning .banner-home-text-overlay {
     min-height: calc(100vh - 5.5rem) !important;
 }
 
-/* 全屏壁纸模式：主内容在壁纸下方 */
-html[data-wallpaper-mode="fullscreen"] .absolute.w-full.z-30.no-banner-layout {
-    min-height: calc(100vh - 0.5rem) !important;
-}
+	/* 全屏壁纸模式：主内容覆盖在壁纸上方 */
+	html[data-wallpaper-mode="fullscreen"] .absolute.w-full.z-30.no-banner-layout {
+	    min-height: calc(100vh - 0.5rem) !important;
+	}
 
 /* 移动端当banner被禁用时的布局样式 */
 @media (max-width: 1023px) {
@@ -661,10 +661,10 @@ html[data-wallpaper-mode="fullscreen"] .absolute.w-full.z-30.no-banner-layout {
  * ============================================ */
 #wallpaper-wrapper.wallpaper-fullscreen {
     position: relative !important;
-    height: 100vh !important;
-    min-height: 100vh !important;
-    max-height: 100vh !important;
     top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100vh !important;
     transform: none !important;
     overflow: hidden !important;
     opacity: 1 !important;
