@@ -903,6 +903,32 @@ export function getDefaultOverlayCardOpacity(): number {
 	return backgroundWallpaper.overlay?.cardOpacity ?? 0.6;
 }
 
+// ============================================================
+// 配置指纹检测：当配置文件中的 overlay 默认值改变时，
+// 自动清除旧的 localStorage 数据，无需手动清理
+// ============================================================
+const OVERLAY_FP_KEY = "overlayCfgFP";
+function getOverlayFingerprint(): string {
+	return `${getDefaultOverlayOpacity()}|${getDefaultOverlayBlur()}|${getDefaultOverlayCardOpacity()}`;
+}
+function syncOverlayFingerprint() {
+	try { localStorage.setItem(OVERLAY_FP_KEY, getOverlayFingerprint()); } catch (_) {}
+}
+
+// 检查配置指纹，过期则清除所有 overlay localStorage
+function ensureOverlayFingerprint(): void {
+	try {
+		const fp = localStorage.getItem(OVERLAY_FP_KEY);
+		const current = getOverlayFingerprint();
+		if (fp !== current) {
+			localStorage.removeItem("overlayOpacity");
+			localStorage.removeItem("overlayBlur");
+			localStorage.removeItem("overlayCardOpacity");
+			localStorage.setItem(OVERLAY_FP_KEY, current);
+		}
+	} catch (_) {}
+}
+
 export function getStoredOverlayOpacity(): number {
 	if (
 		typeof localStorage === "undefined" ||
@@ -910,6 +936,7 @@ export function getStoredOverlayOpacity(): number {
 	) {
 		return getDefaultOverlayOpacity();
 	}
+	ensureOverlayFingerprint();
 	const stored = localStorage.getItem("overlayOpacity");
 	if (stored === null) {
 		return getDefaultOverlayOpacity();
@@ -928,6 +955,7 @@ export function getStoredOverlayBlur(): number {
 	) {
 		return getDefaultOverlayBlur();
 	}
+	ensureOverlayFingerprint();
 	const stored = localStorage.getItem("overlayBlur");
 	if (stored === null) {
 		return getDefaultOverlayBlur();
@@ -946,6 +974,7 @@ export function getStoredOverlayCardOpacity(): number {
 	) {
 		return getDefaultOverlayCardOpacity();
 	}
+	ensureOverlayFingerprint();
 	const stored = localStorage.getItem("overlayCardOpacity");
 	if (stored === null) {
 		return getDefaultOverlayCardOpacity();
@@ -1000,6 +1029,7 @@ export function setOverlayOpacity(opacity: number): void {
 		typeof localStorage.setItem === "function"
 	) {
 		localStorage.setItem("overlayOpacity", String(safeOpacity));
+		syncOverlayFingerprint();
 	}
 	applyOverlayOpacityToDocument(safeOpacity);
 }
@@ -1011,6 +1041,7 @@ export function setOverlayBlur(blur: number): void {
 		typeof localStorage.setItem === "function"
 	) {
 		localStorage.setItem("overlayBlur", String(safeBlur));
+		syncOverlayFingerprint();
 	}
 	applyOverlayBlurToDocument(safeBlur);
 }
@@ -1022,6 +1053,7 @@ export function setOverlayCardOpacity(cardOpacity: number): void {
 		typeof localStorage.setItem === "function"
 	) {
 		localStorage.setItem("overlayCardOpacity", String(safeCardOpacity));
+		syncOverlayFingerprint();
 	}
 	applyOverlayCardOpacityToDocument(safeCardOpacity);
 }
