@@ -132,6 +132,7 @@ const randomSubtitle = getRandomSubtitle();
 const homeTextEnable = backgroundWallpaper.common?.homeText?.enable;
 const showHomeText =
 	(isBannerMode || isFullscreenMode) && !!homeTextEnable && isHomePageCheck;
+const showOverlayHomeHero = isOverlayMode && !!homeTextEnable;
 
 const showBannerPostMeta =
 	(isBannerMode || isFullscreenMode) &&
@@ -668,7 +669,7 @@ const bannerCarouselInterval = Math.max(
                         </div>
                     )}
                     {backgroundWallpaper.common?.homeText?.subtitle && (
-                        <div id="banner-subtitle" class="banner-subtitle text-white/90 leading-snug" style={{ fontSize: backgroundWallpaper.common.homeText.subtitleSize || "1.5rem" }} data-subtitles={JSON.stringify(backgroundWallpaper.common.homeText.subtitle)}>
+                        <div id="banner-subtitle" class="banner-subtitle text-white/90 leading-snug" style={{ fontSize: backgroundWallpaper.common.homeText.subtitleSize || "1.5rem" }} data-home-subtitles={JSON.stringify(backgroundWallpaper.common.homeText.subtitle)}>
                             {backgroundWallpaper.common.homeText.typewriter?.enable ? (
                                 <TypewriterText
                                     text={backgroundWallpaper.common.homeText.subtitle}
@@ -688,32 +689,111 @@ const bannerCarouselInterval = Math.max(
 
     <script is:inline>
         function setRandomSubtitle() {
-            const subtitleElement = document.getElementById('banner-subtitle');
-            if (!subtitleElement) return;
+            const subtitleElements = document.querySelectorAll('[data-home-subtitles]');
+            if (!subtitleElements.length) return;
 
-            const subtitlesData = subtitleElement.dataset.subtitles;
-            if (!subtitlesData) return;
+            subtitleElements.forEach((subtitleElement) => {
+                const subtitlesData = subtitleElement.getAttribute('data-home-subtitles');
+                if (!subtitlesData) return;
 
-            try {
-                const subtitles = JSON.parse(subtitlesData);
-                // Only randomize if it's an array and typewriter is NOT enabled (check for typewriter class)
-                if (Array.isArray(subtitles) && subtitles.length > 0 && !subtitleElement.querySelector('.typewriter')) {
-                    // Use a global variable to persist the subtitle across Swup navigations
-                    // This variable will be reset on full page reload (F5), meeting the requirement
-                    if (!window.fireflyCachedSubtitle) {
-                        const randomIndex = Math.floor(Math.random() * subtitles.length);
-                        window.fireflyCachedSubtitle = subtitles[randomIndex];
+                try {
+                    const subtitles = JSON.parse(subtitlesData);
+                    // Only randomize if it's an array and typewriter is NOT enabled (check for typewriter class)
+                    if (Array.isArray(subtitles) && subtitles.length > 0 && !subtitleElement.querySelector('.typewriter')) {
+                        // Use a global variable to persist the subtitle across Swup navigations
+                        // This variable will be reset on full page reload (F5), meeting the requirement
+                        if (!window.fireflyCachedSubtitle) {
+                            const randomIndex = Math.floor(Math.random() * subtitles.length);
+                            window.fireflyCachedSubtitle = subtitles[randomIndex];
+                        }
+                        subtitleElement.textContent = window.fireflyCachedSubtitle;
                     }
-                    subtitleElement.textContent = window.fireflyCachedSubtitle;
+                } catch (e) {
+                    console.error("Failed to parse subtitles", e);
                 }
-            } catch (e) {
-                console.error("Failed to parse subtitles", e);
-            }
+            });
         }
 
         // Run on initial load
         setRandomSubtitle();
     </script>
+
+    {showOverlayHomeHero && (
+        <script is:inline>
+            (function initOverlayHomeHeroScrollEffect() {
+                function bindOverlayHomeHeroScrollEffect() {
+                    if (typeof window.__overlayHomeHeroCleanup === "function") {
+                        window.__overlayHomeHeroCleanup();
+                    }
+
+                    const hero = document.querySelector(".overlay-home-hero");
+                    const navbarSurface = document.querySelector("#navbar > div");
+                    if (!hero || !document.body.classList.contains("is-home")) {
+                        if (hero instanceof HTMLElement) {
+                            hero.classList.add("hidden");
+                        }
+                        document.body.classList.remove("home-hero-scrolled");
+                        document.documentElement.style.removeProperty("--home-hero-scroll-progress");
+                        if (navbarSurface instanceof HTMLElement) {
+                            navbarSurface.style.removeProperty("background");
+                            navbarSurface.style.removeProperty("backdrop-filter");
+                            navbarSurface.style.removeProperty("border");
+                            navbarSurface.style.removeProperty("box-shadow");
+                        }
+                        return;
+                    }
+                    if (hero instanceof HTMLElement) {
+                        hero.classList.remove("hidden");
+                    }
+
+                    const updateEffect = () => {
+                        const maxScroll = Math.max(hero.clientHeight * 0.45, 1);
+                        const progress = Math.min(1, Math.max(0, window.scrollY / maxScroll));
+                        document.documentElement.style.setProperty(
+                            "--home-hero-scroll-progress",
+                            progress.toFixed(3),
+                        );
+                        document.body.classList.toggle("home-hero-scrolled", progress > 0.04);
+
+                        if (navbarSurface instanceof HTMLElement) {
+                            if (progress <= 0.04) {
+                                navbarSurface.style.setProperty("background", "transparent", "important");
+                                navbarSurface.style.setProperty("backdrop-filter", "none", "important");
+                                navbarSurface.style.setProperty("border", "none", "important");
+                                navbarSurface.style.setProperty("box-shadow", "none", "important");
+                            } else {
+                                navbarSurface.style.removeProperty("background");
+                                navbarSurface.style.removeProperty("backdrop-filter");
+                                navbarSurface.style.removeProperty("border");
+                                navbarSurface.style.removeProperty("box-shadow");
+                            }
+                        }
+                    };
+
+                    updateEffect();
+                    window.addEventListener("scroll", updateEffect, { passive: true });
+                    window.addEventListener("resize", updateEffect);
+
+                    window.__overlayHomeHeroCleanup = () => {
+                        window.removeEventListener("scroll", updateEffect);
+                        window.removeEventListener("resize", updateEffect);
+                    };
+                }
+
+                if (document.readyState === "loading") {
+                    document.addEventListener("DOMContentLoaded", bindOverlayHomeHeroScrollEffect, {
+                        once: true,
+                    });
+                } else {
+                    bindOverlayHomeHeroScrollEffect();
+                }
+
+                window.__syncOverlayHomeHero = bindOverlayHomeHeroScrollEffect;
+                document.addEventListener("astro:page-load", bindOverlayHomeHeroScrollEffect);
+                document.addEventListener("swup:contentReplaced", bindOverlayHomeHeroScrollEffect);
+            })();
+        </script>
+    )}
 
     <!-- Non-home non-post page title overlay (desktop only) -->
     {showBannerPageTitle && (
@@ -847,6 +927,37 @@ const bannerCarouselInterval = Math.max(
 <div class={`absolute w-full z-30 pointer-events-none ${mobileNonHomeBannerClass ? 'mobile-main-no-banner' : ''} ${!(isBannerMode && isBackgroundEnabled) ? 'no-banner-layout' : ''}`} style={isFullscreenMode ? 'top: 0;' : `top: ${finalMainPanelTop}`}>
     <!-- The pointer-events-none here prevent blocking the click event of the TOC -->
     <div class="relative w-full xl:w-[92vw] max-w-(--page-width) mx-auto pointer-events-auto">
+        {showOverlayHomeHero && (
+            <section class="overlay-home-hero flex min-h-[calc(100vh-5.5rem)] items-center justify-center px-4 py-10 md:px-8 md:py-14">
+                <div class="overlay-home-hero-inner w-full max-w-5xl text-center">
+                    <div class="mx-auto flex w-4/5 max-w-4xl flex-col lg:w-3/4">
+                        {backgroundWallpaper.common?.homeText?.title && (
+                            <div class="banner-title font-bold text-white mb-2 lg:mb-4 leading-tight" style={{ '--banner-title-size': backgroundWallpaper.common.homeText.titleSize || "3rem" }}>
+                                {backgroundWallpaper.common.homeText.title}
+                            </div>
+                        )}
+                        {backgroundWallpaper.common?.homeText?.subtitle && (
+                            <div class="banner-subtitle text-white/90 leading-snug" style={{ fontSize: backgroundWallpaper.common.homeText.subtitleSize || "1.5rem" }} data-home-subtitles={JSON.stringify(backgroundWallpaper.common.homeText.subtitle)}>
+                                {backgroundWallpaper.common.homeText.typewriter?.enable ? (
+                                    <TypewriterText
+                                        text={backgroundWallpaper.common.homeText.subtitle}
+                                        speed={backgroundWallpaper.common.homeText.typewriter.speed}
+                                        deleteSpeed={backgroundWallpaper.common.homeText.typewriter.deleteSpeed}
+                                        pauseTime={backgroundWallpaper.common.homeText.typewriter.pauseTime}
+                                    />
+                                ) : (
+                                    randomSubtitle
+                                )}
+                            </div>
+                        )}
+                    </div>
+                </div>
+                <ScrollDownIndicator
+                    class="overlay-home-scroll-indicator"
+                    ariaLabel="Scroll to posts"
+                />
+            </section>
+        )}
         <div id="main-grid"
           class={`transition duration-700 w-full left-0 right-0 grid ${gridCols} grid-rows-[auto_1fr_auto] lg:grid-rows-[auto] mx-auto gap-4 px-2 md:px-4 ${!sidebarConfig.mobileShowSidebar ? 'mobile-no-sidebar' : ''}`}
           data-sidebar-position={sidebarLayoutConfig.position}
@@ -964,4 +1075,3 @@ const bannerCarouselInterval = Math.max(
   }
 
 </style>
-

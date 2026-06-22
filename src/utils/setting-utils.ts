@@ -907,24 +907,42 @@ export function getDefaultOverlayCardOpacity(): number {
 // 配置指纹检测：当配置文件中的 overlay 默认值改变时，
 // 自动清除旧的 localStorage 数据，无需手动清理
 // ============================================================
-const OVERLAY_FP_KEY = "overlayCfgFP";
-function getOverlayFingerprint(): string {
+type OverlayStorage = Pick<Storage, "getItem" | "setItem" | "removeItem">;
+
+export const OVERLAY_STORAGE_FINGERPRINT_KEY = "overlayCfgFP";
+export const OVERLAY_STORAGE_KEYS = [
+	"overlayOpacity",
+	"overlayBlur",
+	"overlayCardOpacity",
+] as const;
+
+export function getOverlayStorageFingerprint(): string {
 	return `${getDefaultOverlayOpacity()}|${getDefaultOverlayBlur()}|${getDefaultOverlayCardOpacity()}`;
 }
+
+function clearStoredOverlaySettings(storage: OverlayStorage): void {
+	for (const key of OVERLAY_STORAGE_KEYS) {
+		storage.removeItem(key);
+	}
+}
+
 function syncOverlayFingerprint() {
-	try { localStorage.setItem(OVERLAY_FP_KEY, getOverlayFingerprint()); } catch (_) {}
+	try {
+		localStorage.setItem(
+			OVERLAY_STORAGE_FINGERPRINT_KEY,
+			getOverlayStorageFingerprint(),
+		);
+	} catch (_) {}
 }
 
 // 检查配置指纹，过期则清除所有 overlay localStorage
 function ensureOverlayFingerprint(): void {
 	try {
-		const fp = localStorage.getItem(OVERLAY_FP_KEY);
-		const current = getOverlayFingerprint();
+		const fp = localStorage.getItem(OVERLAY_STORAGE_FINGERPRINT_KEY);
+		const current = getOverlayStorageFingerprint();
 		if (fp !== current) {
-			localStorage.removeItem("overlayOpacity");
-			localStorage.removeItem("overlayBlur");
-			localStorage.removeItem("overlayCardOpacity");
-			localStorage.setItem(OVERLAY_FP_KEY, current);
+			clearStoredOverlaySettings(localStorage);
+			localStorage.setItem(OVERLAY_STORAGE_FINGERPRINT_KEY, current);
 		}
 	} catch (_) {}
 }

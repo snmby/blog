@@ -301,3 +301,11 @@ body.wallpaper-transparent .float-panel {
         display: none !important;
     }
 }
+
+/* 首页 overlay 首屏：导航容器完全透明，滚过首屏后恢复原有导航状态 */
+html[data-wallpaper-mode="overlay"] body.is-home:not(.home-hero-scrolled):has(#wallpaper-wrapper) #navbar[data-transparent-mode="semi"] > div {
+    backdrop-filter: none !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}

@@ -26,6 +26,11 @@ import {
 import { defaultFavicons } from "@/constants/icon";
 import type { Favicon } from "@/types/config";
 import { isHomePage } from "@/utils/layout-utils";
+import {
+	getOverlayStorageFingerprint,
+	OVERLAY_STORAGE_FINGERPRINT_KEY,
+	OVERLAY_STORAGE_KEYS,
+} from "@/utils/setting-utils";
 import { url } from "@/utils/url-utils";
 
 import "@/styles/main.css";
@@ -248,6 +253,9 @@ const siteLang = lang.replace("_", "-");
         lightTheme: expressiveCodeConfig.lightTheme,
         baseUrl: import.meta.env.BASE_URL,
         cardTransparentOpacity: backgroundWallpaper.overlay?.cardOpacity ?? 0.6,
+        overlayStorageFingerprint: getOverlayStorageFingerprint(),
+        overlayStorageFingerprintKey: OVERLAY_STORAGE_FINGERPRINT_KEY,
+        overlayStorageKeys: [...OVERLAY_STORAGE_KEYS],
       }}
     >
       // 仅在首页刷新时回到顶部，其他页面保持浏览器默认行为
@@ -297,6 +305,20 @@ const siteLang = lang.replace("_", "-");
       // Load the hue from local storage
       const hue = localStorage.getItem("hue") || configHue;
       document.documentElement.style.setProperty("--hue", hue);
+
+      function ensureOverlayStorageIsFresh() {
+        try {
+          const storedFingerprint = localStorage.getItem(overlayStorageFingerprintKey);
+          if (storedFingerprint !== overlayStorageFingerprint) {
+            for (const key of overlayStorageKeys) {
+              localStorage.removeItem(key);
+            }
+            localStorage.setItem(overlayStorageFingerprintKey, overlayStorageFingerprint);
+          }
+        } catch (_) {}
+      }
+
+      ensureOverlayStorageIsFresh();
 
       // 设置卡片透明度（全屏透明模式下使用），优先使用用户自定义值
       const storedCardOpacity = localStorage.getItem("overlayCardOpacity");
@@ -913,7 +935,7 @@ function disableAnimation() {
     // 首页回顶部，其他页滚动到 #main-grid（与 ScrollDownIndicator 行为一致）
     window.swup.hooks.replace("scroll:top", (visit: { to: { url: string } }, args: { options: ScrollIntoViewOptions }) => {
       const wallpaperMode = document.documentElement.getAttribute("data-wallpaper-mode");
-      if (wallpaperMode === "fullscreen" && !pathsEqual(visit.to.url, url("/"))) {
+      if ((wallpaperMode === "fullscreen" || wallpaperMode === "overlay") && !pathsEqual(visit.to.url, url("/"))) {
         const mainGrid = document.getElementById("main-grid");
         if (mainGrid) {
           mainGrid.scrollIntoView({ behavior: args.options?.behavior || "auto" });
@@ -1073,6 +1095,9 @@ function disableAnimation() {
       } else {
         bodyElement!.classList.remove("lg:is-home");
         bodyElement!.classList.remove("is-home");
+      }
+      if (typeof (window as any).__syncOverlayHomeHero === "function") {
+        (window as any).__syncOverlayHomeHero();
       }
 
       // 强制回流，确保 transform 立即生效，然后恢复过渡动画

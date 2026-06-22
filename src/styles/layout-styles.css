@@ -33,6 +33,168 @@ html.is-page-transitioning .banner-home-text-overlay {
     animation: banner-fadeInUp 0.3s ease-out 0.3s both;
 }
 
+#wallpaper-wrapper .scroll-down-indicator {
+    appearance: none;
+    background: none;
+    border: 0;
+    padding: 0;
+}
+
+body:not(.is-home) .overlay-home-hero {
+    display: none !important;
+}
+
+body.is-home .overlay-home-hero {
+    position: relative;
+    min-height: max(calc(100vh - 5.5rem), 32rem);
+    z-index: 0;
+    isolation: isolate;
+}
+
+body.is-home .overlay-home-hero-inner {
+    display: flex;
+    min-height: inherit;
+    align-items: center;
+    justify-content: center;
+}
+
+body.is-home .overlay-home-hero::after {
+    content: "";
+    position: absolute;
+    inset: auto 0 0 0;
+    height: min(24vh, 14rem);
+    background:
+        linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, calc(0.06 * var(--home-hero-scroll-progress, 0)))),
+        linear-gradient(to top, rgba(0, 0, 0, calc(0.3 + 0.22 * var(--home-hero-scroll-progress, 0))), transparent 70%);
+    pointer-events: none;
+    transition: opacity 0.35s ease, background 0.35s ease;
+}
+
+body.is-home .overlay-home-hero .scroll-down-indicator {
+    appearance: none;
+    position: fixed;
+    left: 50%;
+    bottom: 1.5rem;
+    z-index: 35;
+    display: inline-flex;
+    height: 3.5rem;
+    width: 3.5rem;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    border-radius: 9999px;
+    padding: 0;
+    cursor: pointer;
+    color: rgba(255, 255, 255, 0.92);
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow:
+        0 18px 40px rgba(0, 0, 0, 0.18),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(12px);
+    transform: translateX(-50%);
+    opacity: calc(1 - var(--home-hero-scroll-progress, 0));
+    transition:
+        opacity 0.35s ease,
+        transform 0.35s ease,
+        background-color 0.35s ease,
+        box-shadow 0.35s ease;
+}
+
+body.is-home .overlay-home-hero .scroll-down-indicator:hover {
+    background: rgba(255, 255, 255, 0.14);
+    box-shadow:
+        0 22px 44px rgba(0, 0, 0, 0.22),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+}
+
+body.is-home .overlay-home-hero .scroll-down-indicator.hide {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(-50%) translateY(0.9rem) scale(0.94);
+}
+
+body.is-home .overlay-home-hero .scroll-down-indicator .scroll-down-icon {
+    font-size: 2.2rem;
+    animation:
+        scroll-down-bounce 1.8s ease-in-out infinite,
+        scroll-down-glow 2.8s ease-in-out infinite;
+    filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.28));
+}
+
+html[data-wallpaper-mode="overlay"] body.is-home #content-wrapper {
+    position: relative;
+    z-index: 1;
+}
+
+html[data-wallpaper-mode="overlay"] body.is-home:not(.home-hero-scrolled) #navbar > div {
+    background: transparent !important;
+    backdrop-filter: none !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+html[data-wallpaper-mode="overlay"] body.is-home #main-grid,
+html[data-wallpaper-mode="overlay"] body.is-home #swup-container {
+    position: relative;
+    z-index: 2;
+}
+
+html[data-wallpaper-mode="overlay"] body.is-home #category-bar-wrapper {
+    margin-top: 0;
+    padding-top: 0;
+}
+
+html[data-wallpaper-mode="overlay"] body.is-home #category-bar {
+    background-color: color-mix(
+        in oklab,
+        var(--card-bg-transparent) 100%,
+        transparent
+    ) !important;
+    backdrop-filter: blur(18px);
+}
+
+html[data-wallpaper-mode="overlay"] body.is-home #category-bar,
+html[data-wallpaper-mode="overlay"] body.is-home #post-list-container,
+html[data-wallpaper-mode="overlay"] body.is-home #main-grid {
+    transition:
+        box-shadow 0.35s ease,
+        background-color 0.35s ease,
+        transform 0.35s ease,
+        border-color 0.35s ease;
+}
+
+html[data-wallpaper-mode="overlay"] body.home-hero-scrolled.is-home #main-grid {
+    transform: none;
+    filter: drop-shadow(0 -18px 28px rgba(0, 0, 0, 0.14));
+}
+
+html[data-wallpaper-mode="overlay"] body.home-hero-scrolled.is-home #category-bar,
+html[data-wallpaper-mode="overlay"] body.home-hero-scrolled.is-home #post-list-container {
+    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.16);
+}
+
+@media (max-width: 1023px) {
+    body.is-home .overlay-home-hero {
+        min-height: max(calc(100svh - 5.5rem), 28rem);
+        padding-top: 1.5rem;
+        padding-bottom: 1.5rem;
+    }
+
+    body.is-home .overlay-home-hero .scroll-down-indicator {
+        bottom: 1.1rem;
+        height: 3.1rem;
+        width: 3.1rem;
+    }
+
+    body.is-home .overlay-home-hero .scroll-down-indicator .scroll-down-icon {
+        font-size: 2rem;
+    }
+
+    html[data-wallpaper-mode="overlay"] body.home-hero-scrolled.is-home #main-grid {
+        transform: none;
+    }
+}
+
 @keyframes banner-fadeInUp {
     from {
         opacity: 0;
@@ -41,6 +203,15 @@ html.is-page-transitioning .banner-home-text-overlay {
     to {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+@keyframes scroll-down-glow {
+    0%, 100% {
+        filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.24));
+    }
+    50% {
+        filter: drop-shadow(0 6px 18px rgba(255, 255, 255, 0.18));
     }
 }
 
@@ -741,6 +912,12 @@ html[data-wallpaper-mode="fullscreen"] body:not(.sticky-navbar) #top-row {
 
 #wallpaper-wrapper.wallpaper-fullscreen .scroll-down-indicator:hover {
     color: rgba(255, 255, 255, 1);
+}
+
+#wallpaper-wrapper.wallpaper-fullscreen .scroll-down-indicator.hide {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(-50%) translateY(0.9rem) scale(0.94);
 }
 
 

@@ -50,6 +50,13 @@ html {
     scroll-behavior: smooth;
 }
 
+/* Hide third-party model/player control bars. */
+.spine-player-controls,
+.spine-player-buttons,
+.spine-player-popup {
+    display: none !important;
+}
+
 /* 页面顶部渐变高光效果 */
 .top-gradient-highlight {
     position: fixed;

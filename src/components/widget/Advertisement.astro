@@ -86,7 +86,7 @@ const useContentPadding = !adConfig.padding;
       <div class:list={[{ "mb-3": adConfig.content || adConfig.link }]}>
         {adConfig.image.link ? (
           <a
-            href={adConfig.image.link}
+            href={adConfig.image.external ? adConfig.image.link : url(adConfig.image.link)}
             target={adConfig.image.external ? "_blank" : "_self"}
             rel={adConfig.image.external ? "noopener noreferrer" : ""}
             class="block overflow-hidden rounded-lg"
@@ -120,7 +120,7 @@ const useContentPadding = !adConfig.padding;
     {adConfig.link && (
       <div class="text-center">
         <a
-          href={adConfig.link.url}
+          href={adConfig.link.external ? adConfig.link.url : url(adConfig.link.url)}
           target={adConfig.link.external ? "_blank" : "_self"}
           rel={adConfig.link.external ? "noopener noreferrer" : ""}
           class="btn-regular inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:scale-105"

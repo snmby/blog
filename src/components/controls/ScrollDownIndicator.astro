@@ -1,33 +1,62 @@
 ---
 import { Icon } from "astro-icon/components";
+
+interface Props {
+	targetId?: string;
+	class?: string;
+	ariaLabel?: string;
+	hideOffset?: number;
+}
+
+const {
+	targetId = "main-grid",
+	class: className,
+	ariaLabel = "Scroll down",
+	hideOffset,
+} = Astro.props as Props;
 ---
 
-<div
-  id="scroll-down-indicator"
-  class="scroll-down-indicator"
-  onclick="document.getElementById('main-grid')?.scrollIntoView({ behavior: 'smooth' })"
+<button
+  type="button"
+  class:list={["scroll-down-indicator", className]}
+  data-scroll-down-indicator
+  data-hide-offset={hideOffset ?? ""}
+  aria-label={ariaLabel}
+  onclick={`document.getElementById(${JSON.stringify(targetId)})?.scrollIntoView({ behavior: 'smooth' })`}
 >
   <Icon name="material-symbols:keyboard-arrow-down-rounded" class="scroll-down-icon" />
-</div>
+</button>
 
 <script is:inline>
   (function () {
-    // 防止重复初始化（Swup 页面切换时可能重复执行）
-    if (window.__scrollDownIndicatorInit) return;
+    if (window.__scrollDownIndicatorInit) {
+      window.__scrollDownIndicatorUpdate?.();
+      return;
+    }
+
     window.__scrollDownIndicatorInit = true;
 
     function updateVisibility() {
-      var indicator = document.getElementById("scroll-down-indicator");
-      if (!indicator) return;
       var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-      if (scrollTop > 100) {
-        indicator.classList.add("hide");
-      } else {
-        indicator.classList.remove("hide");
-      }
+      var indicators = document.querySelectorAll("[data-scroll-down-indicator]");
+
+      indicators.forEach(function (indicator) {
+        var hideOffsetAttr = indicator.getAttribute("data-hide-offset");
+        var hideOffset = hideOffsetAttr ? Number(hideOffsetAttr) : null;
+
+        if (hideOffset !== null && scrollTop > hideOffset) {
+          indicator.classList.add("hide");
+        } else {
+          indicator.classList.remove("hide");
+        }
+      });
     }
 
+    window.__scrollDownIndicatorUpdate = updateVisibility;
+
     window.addEventListener("scroll", updateVisibility, { passive: true });
+    document.addEventListener("astro:page-load", updateVisibility);
+    document.addEventListener("swup:contentReplaced", updateVisibility);
     updateVisibility();
   })();
 </script>

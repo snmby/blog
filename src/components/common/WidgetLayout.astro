@@ -2,6 +2,7 @@
 import { Icon } from "astro-icon/components";
 import I18nKey from "@/i18n/i18nKey";
 import { i18n } from "@/i18n/translation";
+import { url } from "@/utils/url-utils";
 
 interface Props {
 	id: string;
@@ -49,7 +50,7 @@ const className = Astro.props.class;
     {isCollapsed && <div class="expand-btn px-4 -mb-2">
         {moreUrl ? (
             <a
-                href={moreUrl}
+                href={url(moreUrl)}
                 class="btn-plain rounded-lg w-full h-9 flex items-center justify-center"
                 title={i18n(I18nKey.more)}
             >
