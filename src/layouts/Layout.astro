@@ -606,6 +606,24 @@ const siteLang = lang.replace("_", "-");
     {shouldShowTopHighlight && <div class="top-gradient-highlight" />}
     <ConfigCarrier />
     <MusicManager />
+    <script is:inline>
+      function localizeCodeCopyButtons(root) {
+        const scope = root || document;
+        scope.querySelectorAll?.(".expressive-code .copy button").forEach((button) => {
+          button.setAttribute("title", "复制到剪贴板");
+          button.setAttribute("data-copied", "已复制");
+        });
+      }
+
+      localizeCodeCopyButtons(document);
+      document.addEventListener("astro:page-load", () => localizeCodeCopyButtons(document));
+      document.addEventListener("swup:contentReplaced", () => localizeCodeCopyButtons(document));
+      new MutationObserver((mutations) => {
+        for (const mutation of mutations) {
+          mutation.addedNodes.forEach((node) => localizeCodeCopyButtons(node));
+        }
+      }).observe(document.documentElement, { childList: true, subtree: true });
+    </script>
     <slot />
 
 
