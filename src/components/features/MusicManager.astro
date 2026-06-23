@@ -6,27 +6,26 @@ import { url } from "@/utils/url-utils";
 
 const config = musicPlayerConfig;
 
-const localPlaylist =
-	config.mode === "local" && config.local?.playlist
-		? config.local.playlist.map((song) => {
-				const isFullUrl = (path: string) => /^https?:\/\//.test(path);
-				return {
-					name: song.name,
-					artist: song.artist,
-					url: isFullUrl(song.url) ? song.url : url(song.url),
-					pic: song.cover
-						? isFullUrl(song.cover)
-							? song.cover
-							: url(song.cover)
-						: undefined,
-					lrc: song.lrc
-						? isFullUrl(song.lrc)
-							? song.lrc
-							: url(song.lrc)
-						: undefined,
-				};
-			})
-		: [];
+const localPlaylist = config.local?.playlist
+	? config.local.playlist.map((song) => {
+			const isFullUrl = (path: string) => /^https?:\/\//.test(path);
+			return {
+				name: song.name,
+				artist: song.artist,
+				url: isFullUrl(song.url) ? song.url : url(song.url),
+				pic: song.cover
+					? isFullUrl(song.cover)
+						? song.cover
+						: url(song.cover)
+					: undefined,
+				lrc: song.lrc
+					? isFullUrl(song.lrc)
+						? song.lrc
+						: url(song.lrc)
+					: undefined,
+			};
+		})
+	: [];
 
 const managerConfigStr = JSON.stringify({
 	mode: config.mode,
@@ -129,8 +128,8 @@ const managerConfigStr = JSON.stringify({
     }
 
     // ── Meting fetch ─────────────────────────────────────────
-    async function fetchMetingData() {
-        if (!config.meting) return;
+    async function fetchMetingPlaylist() {
+        if (!config.meting) return [];
         var m = config.meting;
         var apis = [m.api].concat(m.fallbackApis || []);
 
@@ -150,7 +149,7 @@ const managerConfigStr = JSON.stringify({
                 var data = await res.json();
 
                 if (Array.isArray(data) && data.length > 0) {
-                    state.playlist = data.map(function (item) {
+                    return data.map(function (item) {
                         return {
                             name: item.title || item.name || 'Unknown',
                             artist: item.author || item.artist || 'Unknown',
@@ -159,13 +158,39 @@ const managerConfigStr = JSON.stringify({
                             lrc: item.lrc
                         };
                     });
-                    return;
                 }
             } catch (e) {
                 console.warn('Meting API failed for ' + baseApi, e);
             }
         }
         throw new Error('All Meting APIs failed');
+    }
+
+    function appendPlaylist(tracks) {
+        if (!Array.isArray(tracks) || tracks.length === 0) return;
+
+        var seen = {};
+        state.playlist.forEach(function (track) {
+            var key = (track.url || '') + '|' + track.name + '|' + track.artist;
+            seen[key] = true;
+        });
+
+        var added = false;
+        tracks.forEach(function (track) {
+            var key = (track.url || '') + '|' + track.name + '|' + track.artist;
+            if (!seen[key]) {
+                state.playlist.push(track);
+                seen[key] = true;
+                added = true;
+            }
+        });
+
+        if (added) {
+            emit('fm:playlist', {
+                playlist: state.playlist,
+                currentIndex: state.currentIndex
+            });
+        }
     }
 
     // ── Lyrics ───────────────────────────────────────────────
@@ -355,10 +380,10 @@ const managerConfigStr = JSON.stringify({
         state.initializing = true;
 
         try {
-            if (config.mode === 'meting' && config.meting) {
-                await fetchMetingData();
-            } else if (config.mode === 'local') {
-                state.playlist = config.localPlaylist || [];
+            state.playlist = (config.localPlaylist || []).slice();
+
+            if (state.playlist.length === 0 && config.mode === 'meting' && config.meting) {
+                state.playlist = await fetchMetingPlaylist();
             }
 
             if (state.playlist.length > 0) {
@@ -380,6 +405,16 @@ const managerConfigStr = JSON.stringify({
                 });
 
                 loadTrack(startIndex, false);
+
+                if (config.mode === 'meting' && config.meting && (config.localPlaylist || []).length > 0) {
+                    fetchMetingPlaylist()
+                        .then(function (tracks) {
+                            appendPlaylist(tracks);
+                        })
+                        .catch(function (e) {
+                            console.warn('Meting playlist background load failed:', e);
+                        });
+                }
             } else {
                 state.initialized = true;
                 emit('fm:init', {

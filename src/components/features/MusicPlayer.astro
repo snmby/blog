@@ -647,6 +647,11 @@ const widgetId =
         }
     });
 
+    on('fm:playlist', function (e) {
+        var d = e.detail;
+        renderPlaylist(d.playlist, d.currentIndex);
+    });
+
     on('fm:track', function (e) {
         var d = e.detail;
         updateTrackUI(d.track);

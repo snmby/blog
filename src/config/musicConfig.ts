@@ -10,7 +10,9 @@ export const musicPlayerConfig: MusicPlayerConfig = {
 	// 是否在导航栏显示音乐播放器入口
 	showInNavbar: true,
 
-	// 使用方式："meting" 使用 Meting API，"local" 使用本地音乐列表
+	// 使用方式：
+	// "meting" 优先使用本地音乐列表，再后台追加 Meting API 歌单
+	// "local" 只使用本地音乐列表
 	mode: "meting",
 
 	// 默认音量 (0-1)
@@ -42,7 +44,9 @@ export const musicPlayerConfig: MusicPlayerConfig = {
 		],
 	},
 
-	// 本地音乐配置（当 mode 为 'local' 时使用）
+	// 本地音乐配置
+	// E:\CloudMusic\VipSongsDownload 里当前是 .ncm 文件，浏览器不能直接播放。
+	// 转为 mp3/flac/m4a/ogg 并放到 public/assets/music 后，再在这里添加条目即可。
 	// 1. 支持传入歌词文件的路径
 	// lrc: "/assets/music/lrc/使一颗心免于哀伤-哼唱.lrc",
 	// 2. 或者直接填入歌词字符串内容
