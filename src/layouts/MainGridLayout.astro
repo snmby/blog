@@ -298,10 +298,8 @@ const desktopWallpaperSources = [
 		? { style: "static", src: desktopWallpaperStaticSrc }
 		: null,
 ].filter(Boolean) as { style: "animated" | "static"; src: string }[];
-const desktopTemplateImages =
-	desktopWallpaperStyle === "static"
-		? desktopStaticImages.slice(1)
-		: desktopAnimatedImages.slice(1);
+const desktopAnimatedTemplateImages = desktopAnimatedImages.slice(1);
+const desktopStaticTemplateImages = desktopStaticImages.slice(1);
 const desktopWallpaperCount =
 	desktopWallpaperStyle === "static"
 		? desktopStaticImages.length
@@ -413,8 +411,24 @@ const desktopWallpaperCount =
                 />
             </div>
         ))}
-        {desktopTemplateImages.map((src) => (
-            <template class="banner-tpl-desktop">
+        {desktopAnimatedTemplateImages.map((src) => (
+            <template class="banner-tpl-desktop" data-wallpaper-style="animated">
+                <ImageWrapper
+                    id="banner"
+                    alt="Desktop background image of the blog"
+                    class="object-cover h-full"
+                    src={src}
+                    position={backgroundWallpaper.banner?.position}
+                    widths={[1280, 1920, 2560]}
+                    sizes="100vw"
+                    loading="eager"
+                    fetchpriority="high"
+                    quality={configQuality}
+                />
+            </template>
+        ))}
+        {desktopStaticTemplateImages.map((src) => (
+            <template class="banner-tpl-desktop" data-wallpaper-style="static">
                 <ImageWrapper
                     id="banner"
                     alt="Desktop background image of the blog"
@@ -442,13 +456,32 @@ const desktopWallpaperCount =
 
             if (mobileCount <= 1 && desktopCount <= 1) return;
 
+            function getDesktopWallpaperStyle() {
+                var style = document.documentElement.getAttribute('data-desktop-wallpaper-style');
+                return style === 'static' ? 'static' : 'animated';
+            }
+
+            function getBannerSlot(slotClass) {
+                if (slotClass === 'banner-image-slot-desktop') {
+                    return container.querySelector('.banner-image-slot-desktop[data-wallpaper-style="' + getDesktopWallpaperStyle() + '"]');
+                }
+                return container.querySelector('.' + slotClass);
+            }
+
+            function getBannerTemplates(tplClass) {
+                if (tplClass === 'banner-tpl-desktop') {
+                    return container.querySelectorAll('.banner-tpl-desktop[data-wallpaper-style="' + getDesktopWallpaperStyle() + '"]');
+                }
+                return container.querySelectorAll('.' + tplClass);
+            }
+
             // 保存 SSR 初始第一张图的 HTML，供后续轮播收集完整帧序列使用
             if (typeof window.__bannerInitialFrameHtml === 'undefined') {
                 window.__bannerInitialFrameHtml = {};
             }
 
             function rememberInitialFrame(slotClass) {
-                var slot = container.querySelector('.' + slotClass);
+                var slot = getBannerSlot(slotClass);
                 if (!slot) return;
                 if (!window.__bannerInitialFrameHtml[slotClass]) {
                     window.__bannerInitialFrameHtml[slotClass] = slot.innerHTML;
@@ -469,8 +502,8 @@ const desktopWallpaperCount =
             // 从 template 替换默认图片（index 0 = 已渲染的默认图，>0 = template）
             function applyRandom(slotClass, tplClass, randomIndex) {
                 if (randomIndex === 0) return;
-                var slot = container.querySelector('.' + slotClass);
-                var templates = container.querySelectorAll('.' + tplClass);
+                var slot = getBannerSlot(slotClass);
+                var templates = getBannerTemplates(tplClass);
                 if (!slot || !templates.length) return;
                 var tpl = templates[randomIndex - 1];
                 if (!tpl) return;
