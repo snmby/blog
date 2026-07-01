@@ -475,6 +475,31 @@ const desktopWallpaperCount =
                 return container.querySelectorAll('.' + tplClass);
             }
 
+            function activateVideos(root) {
+                if (!root) return;
+                var videos = root.querySelectorAll('video');
+                for (var i = 0; i < videos.length; i++) {
+                    var video = videos[i];
+                    video.muted = true;
+                    video.defaultMuted = true;
+                    video.playsInline = true;
+                    video.loop = true;
+                    video.autoplay = true;
+                    video.preload = 'auto';
+                    if (video.readyState === 0) {
+                        video.load();
+                    }
+                    var play = (function(target) {
+                        return function() {
+                            if (!target.paused) return;
+                            target.play().catch(function() {});
+                        };
+                    })(video);
+                    play();
+                    video.addEventListener('canplay', play, { once: true });
+                }
+            }
+
             // 保存 SSR 初始第一张图的 HTML，供后续轮播收集完整帧序列使用
             if (typeof window.__bannerInitialFrameHtml === 'undefined') {
                 window.__bannerInitialFrameHtml = {};
@@ -509,10 +534,12 @@ const desktopWallpaperCount =
                 if (!tpl) return;
                 slot.innerHTML = '';
                 slot.appendChild(tpl.content.cloneNode(true));
+                activateVideos(slot);
             }
 
             applyRandom('banner-image-slot-mobile', 'banner-tpl-mobile', window.__bannerRandomIndex.mobile);
             applyRandom('banner-image-slot-desktop', 'banner-tpl-desktop', window.__bannerRandomIndex.desktop);
+            activateVideos(container);
         })();
     </script>
 
@@ -552,6 +579,31 @@ const desktopWallpaperCount =
 
             function isBannerWallpaperMode() {
                 return document.documentElement.getAttribute('data-wallpaper-mode') === WALLPAPER_BANNER;
+            }
+
+            function activateVideos(root) {
+                if (!root) return;
+                var videos = root.querySelectorAll('video');
+                for (var i = 0; i < videos.length; i++) {
+                    var video = videos[i];
+                    video.muted = true;
+                    video.defaultMuted = true;
+                    video.playsInline = true;
+                    video.loop = true;
+                    video.autoplay = true;
+                    video.preload = 'auto';
+                    if (video.readyState === 0) {
+                        video.load();
+                    }
+                    var play = (function(target) {
+                        return function() {
+                            if (!target.paused) return;
+                            target.play().catch(function() {});
+                        };
+                    })(video);
+                    play();
+                    video.addEventListener('canplay', play, { once: true });
+                }
             }
 
             // 收集所有帧内容
@@ -634,6 +686,7 @@ const desktopWallpaperCount =
                 newSlot.style.transition = 'opacity ' + FADE_MS + 'ms ease-in-out';
                 newSlot.innerHTML = frames[nextIndex];
                 oldSlot.parentNode.insertBefore(newSlot, oldSlot.nextSibling);
+                activateVideos(newSlot);
 
                 // 获取 LQIP 占位和图片元素
                 var placeholder = newSlot.querySelector('.lqip-placeholder');
@@ -703,6 +756,7 @@ const desktopWallpaperCount =
                 // 首张图立即启动 Ken Burns 缩放
                 applyInitialKB('banner-image-slot-mobile');
                 applyInitialKB('banner-image-slot-desktop');
+                activateVideos(container);
 
                 timerId = setInterval(function() {
                     if (!isBannerWallpaperMode()) { stopCarousel(); return; }
