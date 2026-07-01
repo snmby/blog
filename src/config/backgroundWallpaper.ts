@@ -41,6 +41,12 @@ export const backgroundWallpaper: BackgroundWallpaperConfig = {
 		// 桌面背景图片（支持单张或多张随机）
 		// desktop: "assets/images/DesktopWallpaper/d1.avif",
 		desktop: [
+			"assets/images/DesktopWallpaper/d1.mp4",
+			"assets/images/DesktopWallpaper/d2.mp4",
+			"assets/images/DesktopWallpaper/d3.mp4",
+			"assets/images/DesktopWallpaper/d4.mp4",
+			"assets/images/DesktopWallpaper/d5.mp4",
+			"assets/images/DesktopWallpaper/d6.mp4",
 			"assets/images/DesktopWallpaper/d1.avif",
 			"assets/images/DesktopWallpaper/d2.avif",
 			"assets/images/DesktopWallpaper/d3.avif",

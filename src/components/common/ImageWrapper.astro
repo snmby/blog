@@ -21,7 +21,6 @@ interface Props {
 	basePath?: string;
 	loading?: "lazy" | "eager";
 	fetchpriority?: "high" | "low" | "auto";
-	// 响应式图像属性
 	layout?: ResponsiveImageLayout;
 	usePicture?: boolean;
 	formats?: ImageFormat[];
@@ -48,6 +47,11 @@ const {
 
 const fallbackFormat = getFallbackFormat();
 const className = Astro.props.class;
+const normalizedSrc = src.toLowerCase();
+const isAnimatedImage =
+	normalizedSrc.endsWith(".gif") || normalizedSrc.endsWith(".webp");
+const isVideoBackground =
+	normalizedSrc.endsWith(".mp4") || normalizedSrc.endsWith(".webm");
 
 const isLocal = !(
 	src.startsWith("/") ||
@@ -57,39 +61,57 @@ const isLocal = !(
 );
 const isPublic = src.startsWith("/");
 
-// TODO temporary workaround for images dynamic import
-// https://github.com/withastro/astro/issues/3373
 let img: ImageMetadata | null = null;
+let localVideoSrc: string | null = null;
 if (isLocal) {
-	const files = import.meta.glob<ImageMetadata>(
-		"../../**/*.{png,jpg,jpeg,webp,avif}",
-		{
+	if (isVideoBackground) {
+		const videos = import.meta.glob("../../**/*.{mp4,webm}", {
 			import: "default",
-		},
-	);
-	let normalizedPath = path
-		.normalize(path.join("../../", basePath, src))
-		.replace(/\\/g, "/");
-	const file = files[normalizedPath];
-	if (!file) {
-		console.error(
-			`\n[ERROR] Image file not found: ${normalizedPath.replace("../../", "src/")}`,
-		);
+			query: "?url",
+		});
+		const normalizedPath = path
+			.normalize(path.join("../../", basePath, src))
+			.replace(/\\/g, "/");
+		const file = videos[normalizedPath];
+		if (!file) {
+			console.error(
+				`\n[ERROR] Video file not found: ${normalizedPath.replace("../../", "src/")}`,
+			);
+		} else {
+			localVideoSrc = (await file()) as string;
+		}
 	} else {
-		img = await file();
+		const files = import.meta.glob<ImageMetadata>(
+			"../../**/*.{png,jpg,jpeg,webp,avif,gif}",
+			{
+				import: "default",
+			},
+		);
+		const normalizedPath = path
+			.normalize(path.join("../../", basePath, src))
+			.replace(/\\/g, "/");
+		const file = files[normalizedPath];
+		if (!file) {
+			console.error(
+				`\n[ERROR] Image file not found: ${normalizedPath.replace("../../", "src/")}`,
+			);
+		} else {
+			img = await file();
+		}
 	}
 }
 
 const imageClass =
 	"w-full h-full object-cover opacity-0 transition-opacity duration-500 ease-out";
 const imageStyle = `object-position: ${position}`;
+const videoClass = "w-full h-full object-cover";
+const videoStyle = `object-position: ${position};`;
 
-// 检查是否需要添加 referrerpolicy（仅对非本地图片）
 const fullSrc = isPublic ? url(src) : src;
+const resolvedVideoSrc = isLocal ? localVideoSrc : fullSrc;
 const referrerPolicy =
 	!isLocal && shouldAddNoReferrer(fullSrc) ? "no-referrer" : undefined;
 
-// 构建响应式图像属性
 const responsiveProps = {
 	...(layout && { layout }),
 	...(widths && { widths }),
@@ -97,39 +119,69 @@ const responsiveProps = {
 	...(quality && { quality }),
 };
 
-// LQIP 渐变占位
 const lqipProps = isLocal
 	? getLqipProps(src, basePath)
 	: isPublic
 		? getLqipProps(src, basePath, true)
 		: getLqipProps(src);
+const shouldShowLqip = !isAnimatedImage && !isVideoBackground;
 ---
-<div id={id} class:list={[className, 'overflow-hidden relative']}>
-    <div class="lqip-placeholder absolute inset-0 pointer-events-none" style={lqipProps.style} aria-hidden="true"></div>
-    <div class="transition absolute inset-0 dark:bg-black/10 pointer-events-none"></div>
-    {isLocal && img && usePicture && (
-        <Picture
-            src={img}
-            alt={alt || ""}
-            class={imageClass}
-            style={imageStyle}
-            loading={loading}
-            fetchpriority={fetchpriority}
-            formats={formats}
-            fallbackFormat={fallbackFormat}
-            {...responsiveProps}
-        />
-    )}
-    {isLocal && img && !usePicture && (
-        <Image
-            src={img}
-            alt={alt || ""}
-            class={imageClass}
-            style={imageStyle}
-            loading={loading}
-            fetchpriority={fetchpriority}
-            {...responsiveProps}
-        />
-    )}
-    {!isLocal && <img src={isPublic ? url(src) : src} alt={alt || ""} class={imageClass} style={imageStyle} loading={loading} fetchpriority={fetchpriority} referrerpolicy={referrerPolicy} />}
+
+<div id={id} class:list={[className, "overflow-hidden relative"]}>
+	{shouldShowLqip && (
+		<div
+			class="lqip-placeholder absolute inset-0 pointer-events-none"
+			style={lqipProps.style}
+			aria-hidden="true"
+		></div>
+	)}
+	<div class="transition absolute inset-0 dark:bg-black/10 pointer-events-none"></div>
+	{isLocal && img && usePicture && !isAnimatedImage && (
+		<Picture
+			src={img}
+			alt={alt || ""}
+			class={imageClass}
+			style={imageStyle}
+			loading={loading}
+			fetchpriority={fetchpriority}
+			formats={formats}
+			fallbackFormat={fallbackFormat}
+			{...responsiveProps}
+		/>
+	)}
+	{isLocal && img && (isAnimatedImage || !usePicture) && (
+		<Image
+			src={img}
+			alt={alt || ""}
+			class={imageClass}
+			style={imageStyle}
+			loading={loading}
+			fetchpriority={fetchpriority}
+			{...responsiveProps}
+		/>
+	)}
+	{resolvedVideoSrc && (
+		<video
+			src={resolvedVideoSrc}
+			class={videoClass}
+			style={videoStyle}
+			autoplay
+			muted
+			loop
+			playsinline
+			preload="auto"
+			aria-label={alt || "Background video of the blog"}
+		></video>
+	)}
+	{!isLocal && !isVideoBackground && (
+		<img
+			src={fullSrc}
+			alt={alt || ""}
+			class={imageClass}
+			style={imageStyle}
+			loading={loading}
+			fetchpriority={fetchpriority}
+			referrerpolicy={referrerPolicy}
+		/>
+	)}
 </div>

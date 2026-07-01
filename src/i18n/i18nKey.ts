@@ -215,6 +215,9 @@ enum I18nKey {
 
 	// 壁纸模式
 	wallpaperMode = "wallpaperMode",
+	wallpaperDesktopStyle = "wallpaperDesktopStyle",
+	wallpaperDesktopStatic = "wallpaperDesktopStatic",
+	wallpaperDesktopAnimated = "wallpaperDesktopAnimated",
 	wallpaperBannerMode = "wallpaperBannerMode",
 	wallpaperFullscreenMode = "wallpaperFullscreenMode",
 	wallpaperOverlayMode = "wallpaperOverlayMode",

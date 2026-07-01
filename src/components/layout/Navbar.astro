@@ -3,6 +3,7 @@ import { Picture } from "astro:assets";
 import * as path from "node:path";
 import type { ImageMetadata } from "astro";
 import { Icon } from "astro-icon/components";
+import DesktopWallpaperSwitch from "@/components/controls/DesktopWallpaperSwitch.svelte";
 import DisplaySettings from "@/components/controls/DisplaySettingsIntegrated.svelte";
 import LightDarkSwitch from "@/components/controls/LightDarkSwitch.svelte";
 import Search from "@/components/controls/Search.svelte";
@@ -125,11 +126,29 @@ if (isLocalSrcLogo) {
                     return <DropdownMenu link={l} />;
                 })}
             </div>
-            <div class="flex col-start-3 justify-self-end">
+            <div class="flex col-start-3 justify-self-end items-center gap-1">
                 <!--<SearchPanel client:load>-->
                 <Search
                     client:load
+                    class="hidden lg:flex"
                 />
+                <DesktopWallpaperSwitch client:load />
+                <button
+                    aria-label="Desktop animated wallpaper"
+                    class="hidden btn-plain scale-animation rounded-lg h-11 w-11 active:scale-90"
+                    id="desktop-wallpaper-animated-switch"
+                    title="动图"
+                >
+                    <Icon name="material-symbols:motion-photos-auto-outline-rounded" is:inline class="text-[1.25rem]"></Icon>
+                </button>
+                <button
+                    aria-label="Desktop static wallpaper"
+                    class="hidden btn-plain scale-animation rounded-lg h-11 w-11 active:scale-90"
+                    id="desktop-wallpaper-static-switch"
+                    title="静图"
+                >
+                    <Icon name="material-symbols:image-outline" is:inline class="text-[1.25rem]"></Icon>
+                </button>
                 {musicPlayerConfig.showInNavbar && (
                     <button aria-label={i18n(I18nKey.music)} class="btn-plain scale-animation rounded-lg h-11 w-11 active:scale-90" id="music-player-switch">
                         <Icon name="material-symbols:music-note-rounded" is:inline class="text-[1.25rem]"></Icon>
@@ -199,9 +218,19 @@ function loadButtonScript() {
         };
     }
 
+    let desktopWallpaperStyleBtn = document.getElementById("desktop-wallpaper-style-switch");
+    if (desktopWallpaperStyleBtn) {
+        desktopWallpaperStyleBtn.onclick = function () {
+            let desktopWallpaperStylePanel = document.getElementById("desktop-wallpaper-style-panel");
+            if (desktopWallpaperStylePanel) {
+                desktopWallpaperStylePanel.classList.toggle("float-panel-closed");
+            }
+        };
+    }
+
     document.addEventListener("click", function(event) {
-        const panels = ["display-setting", "nav-menu-panel", "music-nav-panel", "theme-mode-panel"];
-        const buttons = ["display-settings-switch", "nav-menu-switch", "music-player-switch", "scheme-switch"];
+        const panels = ["display-setting", "nav-menu-panel", "music-nav-panel", "theme-mode-panel", "desktop-wallpaper-style-panel"];
+        const buttons = ["display-settings-switch", "nav-menu-switch", "music-player-switch", "scheme-switch", "desktop-wallpaper-style-switch"];
 
         panels.forEach((id, index) => {
             const panel = document.getElementById(id);
@@ -261,6 +290,35 @@ function initSemifullScrollDetection() {
             requestAnimationFrame(updateNavbarState);
             ticking = true;
         }
+    }
+
+    const animatedBtn = document.getElementById("desktop-wallpaper-animated-switch");
+    const staticBtn = document.getElementById("desktop-wallpaper-static-switch");
+    const desktopStyleKey = "desktopWallpaperStyle";
+
+    function setDesktopStyle(style) {
+        try {
+            localStorage.setItem(desktopStyleKey, style);
+        } catch (_) {}
+        document.cookie = `${desktopStyleKey}=${style}; path=/; max-age=31536000; samesite=lax`;
+        document.documentElement.setAttribute("data-desktop-wallpaper-style", style);
+
+        const animatedSlot = document.querySelector('.banner-image-slot-desktop[data-wallpaper-style="animated"]');
+        const staticSlot = document.querySelector('.banner-image-slot-desktop[data-wallpaper-style="static"]');
+        if (animatedSlot) animatedSlot.style.display = style === "animated" ? "" : "none";
+        if (staticSlot) staticSlot.style.display = style === "static" ? "" : "none";
+    }
+
+    if (animatedBtn) {
+        animatedBtn.onclick = function () {
+            setDesktopStyle("animated");
+        };
+    }
+
+    if (staticBtn) {
+        staticBtn.onclick = function () {
+            setDesktopStyle("static");
+        };
     }
 
     // 移除之前的滚动事件监听器（如果存在）

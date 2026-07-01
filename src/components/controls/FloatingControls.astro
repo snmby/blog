@@ -34,6 +34,12 @@ const { headings } = Astro.props;
     bottom: 4rem;
   }
 
+  @media (min-width: 1024px) {
+    .floating-controls-container {
+      display: none !important;
+    }
+  }
+
   /* 响应式调整 - 保持原有的位置逻辑 */
   @media (max-width: 1024px) {
     .floating-controls-container {

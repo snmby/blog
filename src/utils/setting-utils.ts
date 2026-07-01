@@ -26,6 +26,11 @@ declare global {
 	}
 }
 
+export type DesktopWallpaperStyle = "animated" | "static";
+
+const DESKTOP_WALLPAPER_STYLE_KEY = "desktopWallpaperStyle";
+const DESKTOP_WALLPAPER_STYLE_COOKIE = "desktopWallpaperStyle";
+
 export function getDefaultHue(): number {
 	const fallback = "250";
 	// 检查是否在浏览器环境中
@@ -863,6 +868,115 @@ export function initWallpaperMode(): void {
 	applyStoredOverlaySettingsToDocument();
 	const storedMode = getStoredWallpaperMode();
 	applyWallpaperModeToDocument(storedMode, false);
+}
+
+function getConfiguredDesktopWallpaperSource(): string {
+	const src = backgroundWallpaper.src;
+	if (typeof src === "string") {
+		return src;
+	}
+	if (Array.isArray(src)) {
+		return src[0] || "";
+	}
+	if (src && typeof src === "object" && "desktop" in src) {
+		const desktop = src.desktop;
+		if (Array.isArray(desktop)) {
+			return desktop[0] || "";
+		}
+		if (typeof desktop === "string") {
+			return desktop;
+		}
+	}
+	return "";
+}
+
+function inferDesktopWallpaperStyle(src: string): DesktopWallpaperStyle {
+	const normalized = src.toLowerCase();
+	return normalized.endsWith(".mp4") || normalized.endsWith(".webm")
+		? "animated"
+		: "static";
+}
+
+export function getDefaultDesktopWallpaperStyle(): DesktopWallpaperStyle {
+	return inferDesktopWallpaperStyle(getConfiguredDesktopWallpaperSource());
+}
+
+export function getStoredDesktopWallpaperStyle(): DesktopWallpaperStyle {
+	if (
+		typeof localStorage === "undefined" ||
+		typeof localStorage.getItem !== "function"
+	) {
+		if (typeof document !== "undefined") {
+			const cookieMatch = document.cookie.match(
+				/(?:^|;\s*)desktopWallpaperStyle=(static|animated)(?:;|$)/,
+			);
+			if (cookieMatch?.[1] === "static" || cookieMatch?.[1] === "animated") {
+				return cookieMatch[1];
+			}
+		}
+		return getDefaultDesktopWallpaperStyle();
+	}
+	const stored = localStorage.getItem(DESKTOP_WALLPAPER_STYLE_KEY);
+	if (stored === "static" || stored === "animated") {
+		return stored;
+	}
+	return getDefaultDesktopWallpaperStyle();
+}
+
+export function applyDesktopWallpaperStyleToDocument(
+	style: DesktopWallpaperStyle,
+): void {
+	if (typeof document === "undefined") {
+		return;
+	}
+	document.documentElement.setAttribute("data-desktop-wallpaper-style", style);
+
+	const desktopSlots = document.querySelectorAll<HTMLElement>(
+		".banner-image-slot-desktop",
+	);
+	desktopSlots.forEach((slot) => {
+		const slotStyle = slot.dataset.wallpaperStyle;
+		if (slotStyle === "static" || slotStyle === "animated") {
+			slot.style.display = slotStyle === style ? "" : "none";
+		}
+	});
+
+	const activeVideo = document.querySelector<HTMLVideoElement>(
+		'.banner-image-slot-desktop[data-wallpaper-style="animated"] video',
+	);
+	if (activeVideo) {
+		if (style === "animated") {
+			void activeVideo.play().catch(() => {});
+		} else {
+			activeVideo.pause();
+		}
+	}
+}
+
+function setDesktopWallpaperStyleCookie(style: DesktopWallpaperStyle): void {
+	if (typeof document === "undefined") {
+		return;
+	}
+	document.cookie = `${DESKTOP_WALLPAPER_STYLE_COOKIE}=${style}; path=/; max-age=31536000; samesite=lax`;
+}
+
+export function setDesktopWallpaperStyle(style: DesktopWallpaperStyle): void {
+	const safeStyle = style === "static" ? "static" : "animated";
+	if (
+		typeof localStorage !== "undefined" &&
+		typeof localStorage.setItem === "function"
+	) {
+		localStorage.setItem(DESKTOP_WALLPAPER_STYLE_KEY, safeStyle);
+	}
+	setDesktopWallpaperStyleCookie(safeStyle);
+	applyDesktopWallpaperStyleToDocument(safeStyle);
+	if (typeof window !== "undefined") {
+		window.dispatchEvent(
+			new CustomEvent("desktopWallpaperStyleChange", {
+				detail: { style: safeStyle },
+			}),
+		);
+	}
 }
 
 export function getStoredWallpaperMode(): WALLPAPER_MODE {

@@ -46,6 +46,9 @@ if (process.env.NODE_ENV === "development") {
 // https://astro.build/config
 export default defineConfig({
 	site: siteConfig.site_url,
+	devToolbar: {
+		enabled: false,
+	},
 
 	base: process.env.GITHUB_PAGES
 		? "/blog/"

@@ -36,6 +36,9 @@ import {
 	getResponsiveSidebarConfig,
 	type ResponsiveSidebarConfig,
 } from "@/utils/responsive-utils";
+import {
+	getStoredDesktopWallpaperStyle,
+} from "@/utils/setting-utils";
 import Layout from "./Layout.astro";
 
 import "@/styles/markdown.css";
@@ -60,6 +63,7 @@ interface Props {
 }
 
 const backgroundImages = getBackgroundImages();
+const desktopWallpaperStyle = getStoredDesktopWallpaperStyle();
 
 const {
 	title,
@@ -133,6 +137,7 @@ const homeTextEnable = backgroundWallpaper.common?.homeText?.enable;
 const showHomeText =
 	(isBannerMode || isFullscreenMode) && !!homeTextEnable && isHomePageCheck;
 const showOverlayHomeHero = isOverlayMode && !!homeTextEnable;
+const showOverlayHeroWaves = showOverlayHomeHero && shouldRenderWaves;
 
 const showBannerPostMeta =
 	(isBannerMode || isFullscreenMode) &&
@@ -265,6 +270,42 @@ const bannerCarouselInterval = Math.max(
 	backgroundWallpaper.banner?.carousel?.interval ?? 5000,
 	3000,
 );
+const isVideoWallpaperSrc = (src: string) => {
+	const normalized = src.toLowerCase();
+	return normalized.endsWith(".mp4") || normalized.endsWith(".webm");
+};
+const desktopAnimatedImages = backgroundImages.desktop.filter(isVideoWallpaperSrc);
+const desktopStaticImages = backgroundImages.desktop.filter(
+	(src) => !isVideoWallpaperSrc(src),
+);
+const desktopWallpaperStaticSrc = desktopStaticImages[0] || "";
+const desktopWallpaperAnimatedSrc = desktopAnimatedImages[0] || "";
+const desktopWallpaperSrc = (() => {
+	const desktopImages = backgroundImages.desktop;
+	if (desktopImages.length === 0) {
+		return "";
+	}
+	if (desktopWallpaperStyle === "static") {
+		return desktopWallpaperStaticSrc || desktopImages[0];
+	}
+	return desktopWallpaperAnimatedSrc || desktopImages[0];
+})();
+const desktopWallpaperSources = [
+	desktopWallpaperAnimatedSrc
+		? { style: "animated", src: desktopWallpaperAnimatedSrc }
+		: null,
+	desktopWallpaperStaticSrc
+		? { style: "static", src: desktopWallpaperStaticSrc }
+		: null,
+].filter(Boolean) as { style: "animated" | "static"; src: string }[];
+const desktopTemplateImages =
+	desktopWallpaperStyle === "static"
+		? desktopStaticImages.slice(1)
+		: desktopAnimatedImages.slice(1);
+const desktopWallpaperCount =
+	desktopWallpaperStyle === "static"
+		? desktopStaticImages.length
+		: desktopAnimatedImages.length;
 ---
 
 <Layout title={title} banner={banner} description={description} lang={lang} setOGTypeArticle={setOGTypeArticle} postSlug={postSlug}>
@@ -316,7 +357,7 @@ const bannerCarouselInterval = Math.max(
     <!-- 背景图片显示 -->
     <div class="relative h-full w-full" id="banner-images-container"
          data-mobile-count={backgroundImages.mobile.length}
-         data-desktop-count={backgroundImages.desktop.length}
+         data-desktop-count={desktopWallpaperCount}
          data-carousel-enabled={bannerCarouselEnabledDefault}
          data-carousel-switchable={bannerCarouselSwitchable}
          data-carousel-interval={bannerCarouselInterval}>
@@ -352,13 +393,17 @@ const bannerCarouselInterval = Math.max(
             </template>
         ))}
         <!-- Desktop: 默认渲染第一张，其余放入 template -->
-        {backgroundImages.desktop.length > 0 && (
-            <div class="banner-image-slot-desktop absolute inset-0 hidden lg:block">
+        {desktopWallpaperSources.map(({ style, src }) => (
+            <div
+                class="banner-image-slot-desktop absolute inset-0 hidden lg:block"
+                data-wallpaper-style={style}
+                style={desktopWallpaperStyle === style ? "" : "display: none;"}
+            >
                 <ImageWrapper
-                    id="banner"
+                    id={style === desktopWallpaperStyle ? "banner" : undefined}
                     alt="Desktop background image of the blog"
                     class="object-cover h-full"
-                    src={backgroundImages.desktop[0]}
+                    src={src}
                     position={backgroundWallpaper.banner?.position}
                     widths={[1280, 1920, 2560]}
                     sizes="100vw"
@@ -367,8 +412,8 @@ const bannerCarouselInterval = Math.max(
                     quality={configQuality}
                 />
             </div>
-        )}
-        {backgroundImages.desktop.slice(1).map((src) => (
+        ))}
+        {desktopTemplateImages.map((src) => (
             <template class="banner-tpl-desktop">
                 <ImageWrapper
                     id="banner"
@@ -956,6 +1001,58 @@ const bannerCarouselInterval = Math.max(
                     class="overlay-home-scroll-indicator"
                     ariaLabel="Scroll to posts"
                 />
+                {showOverlayHeroWaves ? (
+                    <div
+                        class={`overlay-hero-waves waves absolute inset-x-0 bottom-[1rem] h-[3vh] max-h-12 min-h-6 w-full md:bottom-[0rem] md:h-[6vh]
+                            ${!wavesEnabledOnMobile ? 'hidden' : ''} ${!wavesEnabledOnDesktop ? 'md:hidden' : ''} ${wavesEnabledOnDesktop ? 'md:block' : ''}`}
+                        id="overlay-header-waves"
+                        aria-hidden="true"
+                        style="transform: translateZ(0);"
+                    >
+                        <svg
+                            class="waves"
+                            xmlns="http://www.w3.org/2000/svg"
+                            xmlns:xlink="http://www.w3.org/1999/xlink"
+                            viewBox="0 24 150 28"
+                            preserveAspectRatio="none"
+                            shape-rendering="geometricPrecision"
+                        >
+                            <defs>
+                                <path
+                                    id="overlay-gentle-wave"
+                                    d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18"
+                                >
+                                </path>
+                            </defs>
+                            <g class="parallax">
+                                <use
+                                    xlink:href="#overlay-gentle-wave"
+                                    x="48"
+                                    y="0"
+                                    class="overlay-wave-line overlay-wave-line-1"
+                                ></use>
+                                <use
+                                    xlink:href="#overlay-gentle-wave"
+                                    x="48"
+                                    y="2"
+                                    class="overlay-wave-line overlay-wave-line-2"
+                                ></use>
+                                <use
+                                    xlink:href="#overlay-gentle-wave"
+                                    x="48"
+                                    y="4"
+                                    class="overlay-wave-line overlay-wave-line-3"
+                                ></use>
+                                <use
+                                    xlink:href="#overlay-gentle-wave"
+                                    x="48"
+                                    y="6"
+                                    class="overlay-wave-line overlay-wave-line-4"
+                                ></use>
+                            </g>
+                        </svg>
+                    </div>
+                ) : null}
             </section>
         )}
         <div id="main-grid"
@@ -1059,6 +1156,17 @@ const bannerCarouselInterval = Math.max(
 </Layout>
 
 <style is:global>
+  @media (min-width: 1024px) {
+    html[data-desktop-wallpaper-style="animated"] .banner-image-slot-desktop[data-wallpaper-style="static"],
+    html[data-desktop-wallpaper-style="static"] .banner-image-slot-desktop[data-wallpaper-style="animated"] {
+      display: none !important;
+    }
+
+    html[data-desktop-wallpaper-style="animated"] .banner-image-slot-desktop[data-wallpaper-style="animated"],
+    html[data-desktop-wallpaper-style="static"] .banner-image-slot-desktop[data-wallpaper-style="static"] {
+      display: block !important;
+    }
+  }
   /* 右侧栏平滑过渡 */
   #right-sidebar {
     transition: opacity 0.35s ease-in-out,

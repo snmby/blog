@@ -10,6 +10,7 @@ import { i18n } from "@i18n/translation";
 import {
 	getDefaultBannerCarouselEnabled,
 	getDefaultBannerTitleEnabled,
+	getDefaultDesktopWallpaperStyle,
 	getDefaultGradientEnabled,
 	getDefaultHue,
 	getDefaultOverlayBlur,
@@ -20,6 +21,7 @@ import {
 	getHue,
 	getStoredBannerCarouselEnabled,
 	getStoredBannerTitleEnabled,
+	getStoredDesktopWallpaperStyle,
 	getStoredGradientEnabled,
 	getStoredOverlayBlur,
 	getStoredOverlayCardOpacity,
@@ -29,6 +31,7 @@ import {
 	getStoredWavesEnabled,
 	setBannerCarouselEnabled,
 	setBannerTitleEnabled,
+	setDesktopWallpaperStyle,
 	setGradientEnabled,
 	setHue,
 	setOverlayBlur,
@@ -41,6 +44,7 @@ import {
 import { onMount } from "svelte";
 import Icon from "@/components/common/Icon.svelte";
 import { backgroundWallpaper, sakuraConfig, siteConfig } from "@/config";
+import type { DesktopWallpaperStyle } from "@/utils/setting-utils";
 import type { WALLPAPER_MODE } from "@/types/config";
 
 type OverlaySliderItem = {
@@ -80,6 +84,10 @@ let bannerTitleEnabled = $state(true);
 const defaultBannerTitleEnabled = getDefaultBannerTitleEnabled();
 let bannerCarouselEnabled = $state(true);
 const defaultBannerCarouselEnabled = getDefaultBannerCarouselEnabled();
+let desktopWallpaperStyle: DesktopWallpaperStyle = $state(
+	getDefaultDesktopWallpaperStyle(),
+);
+const defaultDesktopWallpaperStyle = getDefaultDesktopWallpaperStyle();
 let sakuraEnabled = $state(true);
 const defaultSakuraEnabled = getDefaultSakuraEnabled();
 let overlayOpacity = $state(getDefaultOverlayOpacity());
@@ -111,10 +119,12 @@ const isBannerTitleSwitchable =
 // 是否允许用户切换横幅轮播
 const isBannerCarouselSwitchable =
 	backgroundWallpaper.banner?.carousel?.switchable ?? false;
+const isDesktopWallpaperStyleSwitchable = true;
 // 是否允许用户切换樱花特效
 const isSakuraSwitchable = sakuraConfig?.switchable ?? false;
 // 是否有任何横幅设置可显示（后续添加新设置时在此处添加条件）
 const hasBannerSettings =
+	isDesktopWallpaperStyleSwitchable ||
 	isWavesSwitchable ||
 	isGradientSwitchable ||
 	isBannerTitleSwitchable ||
@@ -150,6 +160,8 @@ let overlaySettingsIsDefault = $derived(
 let bannerSettingsIsDefault = $derived(
 	(!isBannerTitleSwitchable ||
 		bannerTitleEnabled === defaultBannerTitleEnabled) &&
+		(!isDesktopWallpaperStyleSwitchable ||
+			desktopWallpaperStyle === defaultDesktopWallpaperStyle) &&
 		(!isWavesSwitchable || wavesEnabled === defaultWavesEnabled) &&
 		(!isGradientSwitchable || gradientEnabled === defaultGradientEnabled) &&
 		(!isBannerCarouselSwitchable ||
@@ -241,6 +253,13 @@ function resetGradientEnabled() {
 
 function resetBannerSettings() {
 	if (
+		isDesktopWallpaperStyleSwitchable &&
+		desktopWallpaperStyle !== defaultDesktopWallpaperStyle
+	) {
+		desktopWallpaperStyle = defaultDesktopWallpaperStyle;
+		setDesktopWallpaperStyle(defaultDesktopWallpaperStyle);
+	}
+	if (
 		isBannerTitleSwitchable &&
 		bannerTitleEnabled !== defaultBannerTitleEnabled
 	) {
@@ -302,6 +321,11 @@ function toggleBannerTitleEnabled() {
 function toggleBannerCarouselEnabled() {
 	bannerCarouselEnabled = !bannerCarouselEnabled;
 	setBannerCarouselEnabled(bannerCarouselEnabled);
+}
+
+function switchDesktopWallpaperStyle(style: DesktopWallpaperStyle) {
+	desktopWallpaperStyle = style;
+	setDesktopWallpaperStyle(style);
 }
 
 function toggleSakuraEnabled() {
@@ -401,6 +425,7 @@ onMount(() => {
 	overlayOpacity = getStoredOverlayOpacity();
 	overlayBlur = getStoredOverlayBlur();
 	overlayCardOpacity = getStoredOverlayCardOpacity();
+	desktopWallpaperStyle = getStoredDesktopWallpaperStyle();
 
 	// 从localStorage读取用户偏好布局
 	const savedLayout = localStorage.getItem("postListLayout");
@@ -620,7 +645,7 @@ $effect(() => {
     {/if}
 
     <!-- Banner Settings Section -->
-    {#if (wallpaperMode === WALLPAPER_BANNER || wallpaperMode === WALLPAPER_FULLSCREEN) && hasBannerSettings}
+    {#if (wallpaperMode === WALLPAPER_BANNER || wallpaperMode === WALLPAPER_FULLSCREEN || wallpaperMode === WALLPAPER_OVERLAY) && hasBannerSettings}
         <div class="mt-2 mb-2">
             <div class="flex gap-2 font-bold text-lg text-neutral-900 dark:text-neutral-100 transition relative ml-3 mb-2
                 before:w-1 before:h-4 before:rounded-md before:bg-(--primary)
@@ -635,6 +660,30 @@ $effect(() => {
                 </button>
             </div>
             <div class="space-y-1">
+                {#if isDesktopWallpaperStyleSwitchable}
+                <div class="hidden lg:flex gap-2">
+                    <button
+                        aria-label="Desktop animated wallpaper"
+                        class="flex-1 btn-regular rounded-md py-2 px-3 flex items-center justify-center gap-2 active:scale-95 transition-all relative overflow-hidden"
+                        class:opacity-60={desktopWallpaperStyle !== "animated"}
+                        class:bg-(--btn-regular-bg-hover)={desktopWallpaperStyle === "animated"}
+                        onclick={() => switchDesktopWallpaperStyle("animated")}
+                    >
+                        <Icon icon="material-symbols:motion-photos-auto-outline-rounded" class="text-[1.25rem] shrink-0"></Icon>
+                        <span class="text-xs font-medium">动图</span>
+                    </button>
+                    <button
+                        aria-label="Desktop static wallpaper"
+                        class="flex-1 btn-regular rounded-md py-2 px-3 flex items-center justify-center gap-2 active:scale-95 transition-all relative overflow-hidden"
+                        class:opacity-60={desktopWallpaperStyle !== "static"}
+                        class:bg-(--btn-regular-bg-hover)={desktopWallpaperStyle === "static"}
+                        onclick={() => switchDesktopWallpaperStyle("static")}
+                    >
+                        <Icon icon="material-symbols:image-outline" class="text-[1.25rem] shrink-0"></Icon>
+                        <span class="text-xs font-medium">静图</span>
+                    </button>
+                </div>
+                {/if}
                 <!-- Banner Title Switch -->
                 {#if isBannerTitleSwitchable}
                 <button

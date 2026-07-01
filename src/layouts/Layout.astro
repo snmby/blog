@@ -28,6 +28,7 @@ import type { Favicon } from "@/types/config";
 import { isHomePage } from "@/utils/layout-utils";
 import {
 	getOverlayStorageFingerprint,
+	getStoredDesktopWallpaperStyle,
 	OVERLAY_STORAGE_FINGERPRINT_KEY,
 	OVERLAY_STORAGE_KEYS,
 } from "@/utils/setting-utils";
@@ -256,6 +257,7 @@ const siteLang = lang.replace("_", "-");
         overlayStorageFingerprint: getOverlayStorageFingerprint(),
         overlayStorageFingerprintKey: OVERLAY_STORAGE_FINGERPRINT_KEY,
         overlayStorageKeys: [...OVERLAY_STORAGE_KEYS],
+        defaultDesktopWallpaperStyle: getStoredDesktopWallpaperStyle(),
       }}
     >
       // 仅在首页刷新时回到顶部，其他页面保持浏览器默认行为
@@ -319,6 +321,16 @@ const siteLang = lang.replace("_", "-");
       }
 
       ensureOverlayStorageIsFresh();
+
+      const storedDesktopWallpaperStyle = localStorage.getItem("desktopWallpaperStyle");
+      const resolvedDesktopWallpaperStyle =
+        storedDesktopWallpaperStyle === "static" || storedDesktopWallpaperStyle === "animated"
+          ? storedDesktopWallpaperStyle
+          : defaultDesktopWallpaperStyle;
+      document.documentElement.setAttribute(
+        "data-desktop-wallpaper-style",
+        resolvedDesktopWallpaperStyle
+      );
 
       // 设置卡片透明度（全屏透明模式下使用），优先使用用户自定义值
       const storedCardOpacity = localStorage.getItem("overlayCardOpacity");
@@ -865,6 +877,10 @@ function disableAnimation() {
   setClickOutsideToClose("theme-mode-panel", [
     "theme-mode-panel",
     "scheme-switch",
+  ]);
+  setClickOutsideToClose("desktop-wallpaper-style-panel", [
+    "desktop-wallpaper-style-panel",
+    "desktop-wallpaper-style-switch",
   ]);
 
   function initCustomScrollbar() {

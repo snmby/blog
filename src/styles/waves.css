@@ -3,20 +3,23 @@
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
-   1. 用户控制 - 通过 html 属性控制显隐
+   1. User controls
    -------------------------------------------------------------------------- */
-html[data-waves-enabled="false"] #header-waves {
+html[data-waves-enabled="false"] #header-waves,
+html[data-waves-enabled="false"] #overlay-header-waves {
     display: none !important;
 }
 
-html[data-waves-enabled="true"] #header-waves {
+html[data-waves-enabled="true"] #header-waves,
+html[data-waves-enabled="true"] #overlay-header-waves {
     display: block !important;
 }
 
 /* --------------------------------------------------------------------------
-   2. 波浪容器基础样式
+   2. Shared wave containers
    -------------------------------------------------------------------------- */
-#header-waves {
+#header-waves,
+#overlay-header-waves {
     isolation: isolate;
     contain: layout style;
     margin-bottom: -1px;
@@ -42,7 +45,7 @@ html[data-waves-enabled="true"] #header-waves {
 }
 
 /* --------------------------------------------------------------------------
-   3. 波浪动画
+   3. Wave animation
    -------------------------------------------------------------------------- */
 .waves > .parallax {
     will-change: transform;
@@ -78,30 +81,36 @@ html[data-waves-enabled="true"] #header-waves {
     0% {
         transform: translate3d(-90px, 0, 0);
     }
+
     100% {
         transform: translate3d(85px, 0, 0);
     }
 }
 
 /* --------------------------------------------------------------------------
-   4. 页面切换期间优化
+   4. Page transition tuning
    -------------------------------------------------------------------------- */
-html.is-page-transitioning #header-waves {
+html.is-page-transitioning #header-waves,
+html.is-page-transitioning #overlay-header-waves {
     contain: layout style paint;
 }
 
 /* --------------------------------------------------------------------------
-   5. 主题切换优化
+   5. Theme transition tuning
    -------------------------------------------------------------------------- */
 .theme-changing #header-waves,
 .theme-changing #header-waves svg,
-.theme-changing #header-waves use {
+.theme-changing #header-waves use,
+.theme-changing #overlay-header-waves,
+.theme-changing #overlay-header-waves svg,
+.theme-changing #overlay-header-waves use {
     will-change: auto;
     transform: translateZ(0);
     backface-visibility: hidden;
 }
 
-.is-theme-transitioning #header-waves {
+.is-theme-transitioning #header-waves,
+.is-theme-transitioning #overlay-header-waves {
     color: var(--page-bg);
     isolation: isolate;
     contain: layout style paint;
@@ -109,16 +118,18 @@ html.is-page-transitioning #header-waves {
     background: transparent;
 }
 
-.is-theme-transitioning #header-waves use {
+.is-theme-transitioning #header-waves use,
+.is-theme-transitioning #overlay-header-waves use {
     will-change: transform;
     transform: translateZ(0);
 }
 
 /* --------------------------------------------------------------------------
-   6. 移动端优化
+   6. Mobile tuning
    -------------------------------------------------------------------------- */
 @media (max-width: 1023px) {
-    #header-waves {
+    #header-waves,
+    #overlay-header-waves {
         overflow: visible;
         z-index: 5;
         transition: transform 0.3s ease-in, opacity 0.2s ease-in;
@@ -132,7 +143,7 @@ html.is-page-transitioning #header-waves {
     }
 
     .waves svg {
-        min-height: 60px;
+        min-height: 32px;
     }
 
     .waves {
@@ -142,7 +153,7 @@ html.is-page-transitioning #header-waves {
 }
 
 /* --------------------------------------------------------------------------
-   7. Overlay 模式隐藏波浪
+   7. Overlay wallpaper mode hides only wallpaper-mounted waves
    -------------------------------------------------------------------------- */
 #wallpaper-wrapper.wallpaper-overlay .waves,
 #wallpaper-wrapper.wallpaper-overlay #header-waves {
@@ -150,10 +161,11 @@ html.is-page-transitioning #header-waves {
 }
 
 /* --------------------------------------------------------------------------
-   8. None 模式隐藏波浪
+   8. None mode hides all waves
    -------------------------------------------------------------------------- */
 html[data-wallpaper-mode="none"] .waves,
-html[data-wallpaper-mode="none"] #header-waves {
+html[data-wallpaper-mode="none"] #header-waves,
+html[data-wallpaper-mode="none"] #overlay-header-waves {
     display: none !important;
 }
 
@@ -162,7 +174,7 @@ html[data-wallpaper-mode="none"] #header-waves {
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
-   1. 用户控制 - 通过 html 属性控制显隐
+   1. User controls
    -------------------------------------------------------------------------- */
 html[data-gradient-enabled="false"] #wallpaper-gradient {
     display: none !important;
@@ -173,14 +185,14 @@ html[data-gradient-enabled="true"] #wallpaper-gradient {
 }
 
 /* --------------------------------------------------------------------------
-   2. 水波纹开启时隐藏渐变（水波纹优先）
+   2. Hide gradient while waves are enabled
    -------------------------------------------------------------------------- */
 html[data-waves-enabled="true"] #wallpaper-gradient {
     display: none !important;
 }
 
 /* --------------------------------------------------------------------------
-   3. 渐变容器基础样式
+   3. Gradient base styles
    -------------------------------------------------------------------------- */
 #wallpaper-gradient {
     z-index: 4;
@@ -188,14 +200,14 @@ html[data-waves-enabled="true"] #wallpaper-gradient {
 }
 
 /* --------------------------------------------------------------------------
-   4. Overlay 模式隐藏渐变
+   4. Overlay mode hides gradient
    -------------------------------------------------------------------------- */
 #wallpaper-wrapper.wallpaper-overlay #wallpaper-gradient {
     display: none !important;
 }
 
 /* --------------------------------------------------------------------------
-   5. None 模式隐藏渐变
+   5. None mode hides gradient
    -------------------------------------------------------------------------- */
 html[data-wallpaper-mode="none"] #wallpaper-gradient {
     display: none !important;
