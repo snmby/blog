@@ -12,7 +12,6 @@ site_url: https://bolgwelt.top
 display_url: https://bolgwelt.top
 logo_url: /favicon/favicon.ico
 locale: en
-publish_mode: editorial_workflow
 
 collections:
   - name: posts
