@@ -9,6 +9,31 @@ export const getStaticPaths = (async ({ paginate }) => {
 	const allBlogPosts = await getSortedPosts();
 	// 使用配置中的文章数量
 	const pageSize = siteConfig.pagination.postsPerPage;
+	if (allBlogPosts.length === 0) {
+		return [
+			{
+				params: { page: undefined },
+				props: {
+					page: {
+						data: [],
+						start: 0,
+						end: 0,
+						size: pageSize,
+						total: 0,
+						currentPage: 1,
+						lastPage: 1,
+						url: {
+							current: "/",
+							prev: undefined,
+							next: undefined,
+							first: undefined,
+							last: undefined,
+						},
+					},
+				},
+			},
+		];
+	}
 	return paginate(allBlogPosts, { pageSize });
 }) satisfies GetStaticPaths;
 // https://github.com/withastro/astro/issues/6507#issuecomment-1489916992
