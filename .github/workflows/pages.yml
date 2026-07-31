@@ -36,7 +36,19 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build site
-        run: pnpm build
+        shell: bash
+        run: |
+          set +e
+          pnpm build 2>&1 | tee build.log
+          status=${PIPESTATUS[0]}
+          if [ "$status" -ne 0 ]; then
+            log="$(tail -n 40 build.log)"
+            log="${log//'%'/'%25'}"
+            log="${log//$'\r'/'%0D'}"
+            log="${log//$'\n'/'%0A'}"
+            echo "::error title=Build site failed::$log"
+            exit "$status"
+          fi
 
       - name: Add nojekyll
         run: touch dist/.nojekyll
