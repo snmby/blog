@@ -10,29 +10,18 @@ export const getStaticPaths = (async ({ paginate }) => {
 	// 使用配置中的文章数量
 	const pageSize = siteConfig.pagination.postsPerPage;
 	if (allBlogPosts.length === 0) {
-		return [
-			{
-				params: { page: undefined },
-				props: {
-					page: {
-						data: [],
-						start: 0,
-						end: 0,
-						size: pageSize,
-						total: 0,
-						currentPage: 1,
-						lastPage: 1,
-						url: {
-							current: "/",
-							prev: undefined,
-							next: undefined,
-							first: undefined,
-							last: undefined,
-						},
-					},
+		return paginate([null], { pageSize }).map((path) => ({
+			...path,
+			props: {
+				...path.props,
+				page: {
+					...path.props.page,
+					data: [],
+					end: 0,
+					total: 0,
 				},
 			},
-		];
+		}));
 	}
 	return paginate(allBlogPosts, { pageSize });
 }) satisfies GetStaticPaths;
