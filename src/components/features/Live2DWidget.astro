@@ -30,11 +30,13 @@ interface Props {
 		primaryColor?: string;
 		transitionDuration?: number;
 		transitionType?: "slide" | "fade";
-		menus?: {
-			items?: MenuItem[];
-			extraItems?: MenuItem[];
-			align?: "left" | "right";
-		};
+		menus?:
+			| false
+			| {
+					items?: MenuItem[];
+					extraItems?: MenuItem[];
+					align?: "left" | "right";
+			  };
 		tips?: {
 			enable?: boolean;
 			welcomeMessage?: string[];
@@ -73,6 +75,7 @@ const modelConfigs = models.map((m) => ({
 
 // 序列化菜单配置（只保留 icon, label, action）
 function serializeMenus(menus: Props["config"]["menus"]) {
+	if (menus === false) return false;
 	if (!menus) return {};
 	const serialize = (items: MenuItem[]) =>
 		items.map(({ icon, label, action }) => ({ icon, label, action }));
@@ -184,7 +187,9 @@ function serializeMenus(menus: Props["config"]["menus"]) {
 			if (transitionType) options.transitionType = transitionType;
 
 			// 菜单配置 - 将 action 字符串映射为实际函数
-			if (menus.items || (menus.extraItems && menus.extraItems.length > 0)) {
+			if (menus === false) {
+				options.menus = false;
+			} else if (menus.items || (menus.extraItems && menus.extraItems.length > 0)) {
 				options.menus = {};
 				if (menus.items) {
 					options.menus.items = menus.items.map((item: any) => ({

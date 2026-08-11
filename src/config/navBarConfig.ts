@@ -16,16 +16,17 @@ const isEnabled = siteConfig.pages;
  */
 const personalLinks: NavBarLink[] = [
 	{
+		name: "🐧 QQ",
+		url: "https://qm.qq.com/q/kmDsjpV0TC",
+		external: true,
+	},
+	{
 		name: "🐙 GitHub",
 		url: "https://github.com/snmby",   // ← 改成你的 GitHub 主页
 		external: true,
 	},
 	{
-		name: "📡 RSS 订阅",
-		url: "/rss.xml",
-	},
-	{
-		name: "📧 Email",
+		name: "📧 邮箱",
 		url: "mailto:ligang11266@163.com",    // ← 改成你的邮箱
 	},
 ];

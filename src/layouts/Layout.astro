@@ -643,6 +643,85 @@ const siteLang = lang.replace("_", "-");
     <!-- Sakura Effect -->
     <SakuraEffect />
 
+    <div
+      id="email-copy-toast"
+      role="status"
+      aria-live="polite"
+      aria-hidden="true"
+      class="fixed left-1/2 bottom-6 z-[1100] pointer-events-none rounded-lg bg-black/85 px-4 py-2 text-sm text-white shadow-lg"
+      style="opacity: 0; transform: translate(-50%, 8px); transition: opacity 160ms ease, transform 160ms ease;"
+    ></div>
+
+    <script is:inline data-swup-ignore-script>
+      (function () {
+        if (window.emailLinkHandlerInitialized) return;
+        window.emailLinkHandlerInitialized = true;
+
+        var hideTimer;
+
+        function showEmailCopied(email) {
+          var toast = document.getElementById("email-copy-toast");
+          if (!toast) return;
+
+          toast.textContent = "邮箱已复制：" + email;
+          toast.setAttribute("aria-hidden", "false");
+          toast.style.opacity = "1";
+          toast.style.transform = "translate(-50%, 0)";
+
+          window.clearTimeout(hideTimer);
+          hideTimer = window.setTimeout(function () {
+            toast.style.opacity = "0";
+            toast.style.transform = "translate(-50%, 8px)";
+            toast.setAttribute("aria-hidden", "true");
+          }, 1800);
+        }
+
+        function copyEmailFallback(email) {
+          var input = document.createElement("textarea");
+          input.value = email;
+          input.setAttribute("readonly", "");
+          input.style.position = "fixed";
+          input.style.opacity = "0";
+          document.body.appendChild(input);
+          input.select();
+
+          try {
+            return document.execCommand("copy");
+          } finally {
+            input.remove();
+          }
+        }
+
+        document.addEventListener("click", async function (event) {
+          var target = event.target;
+          if (!(target instanceof Element)) return;
+
+          var link = target.closest('a[href^="mailto:"]');
+          if (!link) return;
+
+          var href = link.getAttribute("href") || "";
+          var email = decodeURIComponent(href.slice(7).split("?")[0]);
+          if (!email) return;
+
+          event.preventDefault();
+
+          try {
+            if (!navigator.clipboard || !navigator.clipboard.writeText) {
+              throw new Error("Clipboard API unavailable");
+            }
+            await navigator.clipboard.writeText(email);
+            showEmailCopied(email);
+          } catch (_error) {
+            if (copyEmailFallback(email)) {
+              showEmailCopied(email);
+            } else {
+              window.location.href = href;
+            }
+          }
+        });
+      })();
+    </script>
+
     <!-- Fancybox Manager -->
     <FancyboxManager />
   </body>
