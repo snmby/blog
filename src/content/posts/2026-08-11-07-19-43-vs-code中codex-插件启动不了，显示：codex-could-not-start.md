@@ -5,7 +5,8 @@ draft: false
 description: |-
   弹窗Codex could not start
   The extension couldn't load its resources.
-tags: []
+tags:
+  - Codex
 pinned: false
 comment: true
 ---
@@ -24,13 +25,18 @@ The extension couldn't load its resources.
 
 **过程：**
 
-网上搜索解决方案为ctrl+shift + P，输入 `Developer: Open Extension Logs Folder`，查看插件日志，打开 Codex.log
+网上搜索解决方案为ctrl+shift + P，输入
+
+```
+Developer: Open Extension Logs Folder
+```
+
+查看插件日志，打开 Codex.log
 
 ```
 2026-08-11 14:04:57.981 [error] Error fetching error="TypeError: fetch failed" url=https://ab.chatgpt.com/v1/initialize?k=client-sYWqzCYMRkUg4DqqiZcR5DGTNl2iD7zNJY0HoeDLzxR&st=javascript-client&sv=3.33.3&t=1786428252163&sid=a7f3801f-7849-471a-8935-36cb1a209184&se=1
 2026-08-11 14:05:06.572 [error] Error fetching error="TypeError: fetch failed" url=https://ab.chatgpt.com/v1/initialize?k=client-sYWqzCYMRkUg4DqqiZcR5DGTNl2iD7zNJY0HoeDLzxR&st=javascript-client&sv=3.33.3&t=1786428262667&sid=a7f3801f-7849-471a-8935-36cb1a209184&se=1
 2026-08-11 14:05:19.136 [error] Error fetching error="TypeError: fetch failed" url=https://ab.chatgpt.com/v1/initialize?k=client-sYWqzCYMRkUg4DqqiZcR5DGTNl2iD7zNJY0HoeDLzxR&st=javascript-client&sv=3.33.3&t=1786428274669&sid=a7f3801f-7849-471a-8935-36cb1a209184&se=1
-
 ```
 
 博主认为是查看日志发现无法连接，没有走CC-Switch[ 代理](https://jishuzhan.net/article/2086608105072115713#)，最终调整VSCode的settings.json配置如下：
@@ -45,8 +51,6 @@ The extension couldn't load its resources.
 
 编程后两行是新增加的代理，无论是LLM还是其他交互，都走cc-switch代理。
 
-
-
 重新启动后问题依旧存在，日志发生变化：
 
 ```
@@ -59,17 +63,27 @@ The extension couldn't load its resources.
 
 为什么没用？
 
-因为真正给 Codex CLI / app-server 用的配置在：C:\Users\user\.codex\config.toml
+因为真正给 Codex CLI / app-server 用的配置在：
 
-日志显示：fatal: unable to access 'https://github.com/openai/plugins.git/': CONNECT tunnel failed, response 404
+```
+C:\Users\user.codex\config.toml
+```
+
+读取日志发现内容
+
+```
+fatal: unable to access 'https://github.com/openai/plugins.git/': CONNECT tunnel failed, response 404
+```
 
 说明： VS Code/Codex 的网络请求被送进了一个“HTTP 代理”路径。但 127.0.0.1:15721 实际是 cc-switch 的 OpenAI API 服务，不是通用代理，不支持 HTTPS CONNECT，所以返回 404。
 
-同时：  \[CodexWebviewProvider] Webview did not finish starting extensionVersion=26.803.61601 role=sidebar
+同时：
 
-说明：  这说明 Codex 扩展后端已经启动了，但侧边栏 webview 没在超时时间内完成初始化。
+```
+[CodexWebviewProvider] Webview did not finish starting extensionVersion=26.803.61601 role=sidebar
+```
 
-
+  说明：  这说明 Codex 扩展后端已经启动了，但侧边栏 webview 没在超时时间内完成初始化。
 
 **解决方法：**
 
