@@ -8,6 +8,7 @@ description: |-
   The extension couldn't load its resources.
 tags:
   - Codex
+category: Ai工具
 pinned: false
 comment: true
 ---
