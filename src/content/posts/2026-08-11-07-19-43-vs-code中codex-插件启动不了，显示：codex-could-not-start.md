@@ -1,6 +1,7 @@
 ---
 title: VS Code中Codex 插件启动不了，显示：Codex could not start
 published: 2026-08-11T14:51:00.000+08:00
+updated: 2026-08-11T15:26:00.000+08:00
 draft: false
 description: |-
   弹窗Codex could not start
