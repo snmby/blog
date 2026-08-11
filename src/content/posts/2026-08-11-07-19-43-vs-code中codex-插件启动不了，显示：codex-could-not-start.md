@@ -23,17 +23,17 @@ Codex could not start
 The extension couldn't load its resources.
 ```
 
-同时，命令行里的 `codex` 可以正常使用，所以一开始可以排除“Codex CLI 完全不可用”这一类问题，卸载重装codex插件无效
+但命令行里的 `codex` 可以正常使用，排除“Codex CLI 完全不可用”这一类问题，同时卸载重装codex插件无效。
 
 **过程：**
 
-网上搜索解决方案为ctrl+shift + P，输入
+网上搜索解决方案为在vscode中快捷键ctrl+shift + P，输入
 
 ```
 Developer: Open Extension Logs Folder
 ```
 
-查看插件日志，打开 Codex.log
+查看插件日志，打开/openai.chatgpt/Codex.log
 
 ```
 2026-08-11 14:04:57.981 [error] Error fetching error="TypeError: fetch failed" url=https://ab.chatgpt.com/v1/initialize?k=client-sYWqzCYMRkUg4DqqiZcR5DGTNl2iD7zNJY0HoeDLzxR&st=javascript-client&sv=3.33.3&t=1786428252163&sid=a7f3801f-7849-471a-8935-36cb1a209184&se=1
@@ -41,7 +41,7 @@ Developer: Open Extension Logs Folder
 2026-08-11 14:05:19.136 [error] Error fetching error="TypeError: fetch failed" url=https://ab.chatgpt.com/v1/initialize?k=client-sYWqzCYMRkUg4DqqiZcR5DGTNl2iD7zNJY0HoeDLzxR&st=javascript-client&sv=3.33.3&t=1786428274669&sid=a7f3801f-7849-471a-8935-36cb1a209184&se=1
 ```
 
-博主认为是查看日志发现无法连接，没有走CC-Switch[ 代理](https://jishuzhan.net/article/2086608105072115713#)，最终调整VSCode的settings.json配置如下：
+博主查看日志认为是没有走CC-Switch[ 代理](https://jishuzhan.net/article/2086608105072115713#)，最终调整VSCode的settings.json配置如下：
 
 ```
     "codex.apiKey": "cc-switch",
@@ -51,7 +51,7 @@ Developer: Open Extension Logs Folder
     "http.proxyStrictSSL": false
 ```
 
-编程后两行是新增加的代理，无论是LLM还是其他交互，都走cc-switch代理。
+后两行是新增加的代理，无论是LLM还是其他交互，都走cc-switch代理。
 
 重新启动后问题依旧存在，日志发生变化：
 
@@ -71,7 +71,7 @@ Developer: Open Extension Logs Folder
 C:\Users\user.codex\config.toml
 ```
 
-读取日志发现内容
+只能再次看日志，发现
 
 ```
 fatal: unable to access 'https://github.com/openai/plugins.git/': CONNECT tunnel failed, response 404
@@ -79,13 +79,15 @@ fatal: unable to access 'https://github.com/openai/plugins.git/': CONNECT tunnel
 
 说明： VS Code/Codex 的网络请求被送进了一个“HTTP 代理”路径。但 127.0.0.1:15721 实际是 cc-switch 的 OpenAI API 服务，不是通用代理，不支持 HTTPS CONNECT，所以返回 404。
 
+这个报错应该是在settings.json添加了网上博主的那几行代理，复原就行。
+
 同时：
 
 ```
 [CodexWebviewProvider] Webview did not finish starting extensionVersion=26.803.61601 role=sidebar
 ```
 
-  说明：  这说明 Codex 扩展后端已经启动了，但侧边栏 webview 没在超时时间内完成初始化。
+  说明：  Codex 扩展后端已经启动了，但侧边栏 webview 没在超时时间内完成初始化。
 
 **解决方法：**
 
