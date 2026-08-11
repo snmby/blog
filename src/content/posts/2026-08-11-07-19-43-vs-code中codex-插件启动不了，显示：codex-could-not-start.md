@@ -108,3 +108,13 @@ Developer: Reload Window
 ```
 
 原理： 插件后端已启动，但 VS Code 当前窗口里的 Codex webview 初始化状态坏了或卡住了。执行 Developer: Reload Window 后，它重新走完整启动流程，webview 成功发出 ready，插件就好了。
+
+拓展：VS Code 插件不是一个“普通命令行进程”，它跑在 VS Code 的窗口运行时里，里面有几层状态会缓存或卡住。
+
+具体到 Codex 插件，有三层：
+
+1. VS Code renderer 负责当前窗口 UI，包括侧边栏容器。
+
+2. extension host 负责运行 openai.chatgpt 扩展代码，启动 Codex app-server。
+
+3. Codex webview 负责渲染 Codex 侧边栏前端，并向扩展发送 ready 消息。
