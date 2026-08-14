@@ -1,7 +1,7 @@
 ---
 title: VS Code中Codex 插件启动不了，显示：Codex could not start
 published: 2026-08-11T14:51:00.000+08:00
-updated: 2026-08-11T15:26:00.000+08:00
+updated: 2026-08-14T10:31:00.000+08:00
 draft: false
 description: |-
   弹窗Codex could not start
@@ -114,7 +114,10 @@ Developer: Reload Window
 具体到 Codex 插件，有三层：
 
 1. VS Code renderer 负责当前窗口 UI，包括侧边栏容器。
-
 2. extension host 负责运行 openai.chatgpt 扩展代码，启动 Codex app-server。
-
 3. Codex webview 负责渲染 Codex 侧边栏前端，并向扩展发送 ready 消息。
+
+\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\__
+
+重新打开又出问题了，版本有问题。
+安装历史版本26.727.40816问题完美解决
