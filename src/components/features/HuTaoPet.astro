@@ -1,0 +1,374 @@
+---
+const spritesheetPath = "/hu-tao/spritesheet.webp";
+---
+
+<div id="hu-tao-pet" class="hu-tao-pet" data-spritesheet={spritesheetPath}>
+	<div class="hu-tao-pet__bubble" data-pet-message hidden>往生堂第七十七代堂主，参上！</div>
+	<button class="hu-tao-pet__sprite" type="button" aria-label="胡桃桌宠"></button>
+</div>
+
+<style>
+	.hu-tao-pet {
+		--frame-pos-x: 0px;
+		--frame-pos-y: 0px;
+		--pet-scale: 0.78;
+		--pet-active-scale: var(--pet-scale);
+		--pet-alpha: 1;
+		position: fixed;
+		right: max(24px, env(safe-area-inset-right));
+		bottom: max(14px, env(safe-area-inset-bottom));
+		z-index: 940;
+		width: 168px;
+		height: 170px;
+		opacity: var(--pet-alpha);
+		filter: drop-shadow(0 16px 18px rgba(0, 0, 0, 0.24));
+		user-select: none;
+		touch-action: none;
+		transition:
+			opacity 180ms ease,
+			filter 180ms ease;
+	}
+
+	.hu-tao-pet:hover {
+		--pet-alpha: 1;
+		filter: drop-shadow(0 18px 22px rgba(0, 0, 0, 0.3));
+	}
+
+	:global(html[data-hu-tao-pet-enabled="false"]) .hu-tao-pet {
+		display: none;
+	}
+
+	.hu-tao-pet__sprite {
+		position: absolute;
+		left: 50%;
+		bottom: 0;
+		width: 192px;
+		height: 208px;
+		padding: 0;
+		border: 0;
+		background-color: transparent;
+		background-image: var(--hu-tao-spritesheet);
+		background-repeat: no-repeat;
+		background-size: 1536px 1872px;
+		background-position: var(--frame-pos-x) var(--frame-pos-y);
+		cursor: grab;
+		transform: translateX(-50%) scale(var(--pet-active-scale));
+		transform-origin: center bottom;
+		transition: transform 120ms ease;
+	}
+
+	.hu-tao-pet.is-dragging .hu-tao-pet__sprite {
+		--pet-active-scale: 0.8;
+		cursor: grabbing;
+	}
+
+	.hu-tao-pet__bubble {
+		position: absolute;
+		right: 50%;
+		bottom: calc(100% + 10px);
+		width: max-content;
+		max-width: min(220px, 68vw);
+		padding: 0.5rem 0.75rem;
+		border: 1px solid rgba(255, 255, 255, 0.42);
+		border-radius: 0.8rem;
+		background: rgba(24, 24, 30, 0.96);
+		color: #fff;
+		font-size: 0.82rem;
+		line-height: 1.45;
+		text-shadow: 0 1px 1px rgba(0, 0, 0, 0.35);
+		box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28);
+		backdrop-filter: blur(12px);
+		transform: translateX(50%);
+		pointer-events: none;
+		animation: hu-tao-bubble-in 180ms ease-out;
+	}
+
+	.hu-tao-pet__bubble::after {
+		content: "";
+		position: absolute;
+		right: 50%;
+		bottom: -6px;
+		width: 10px;
+		height: 10px;
+		border-right: 1px solid rgba(255, 255, 255, 0.38);
+		border-bottom: 1px solid rgba(255, 255, 255, 0.38);
+		background: inherit;
+		transform: translateX(50%) rotate(45deg);
+	}
+
+	@keyframes hu-tao-bubble-in {
+		from {
+			opacity: 0;
+			transform: translate(50%, 6px);
+		}
+		to {
+			opacity: 1;
+			transform: translate(50%, 0);
+		}
+	}
+
+	@media (max-width: 768px) {
+		.hu-tao-pet {
+			display: none;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.hu-tao-pet__sprite,
+		.hu-tao-pet__bubble {
+			transition: none;
+			animation: none;
+		}
+	}
+</style>
+
+<script is:inline>
+	(function () {
+		var pet = document.getElementById("hu-tao-pet");
+		if (!pet || pet.dataset.initialized === "true") {
+			return;
+		}
+
+		pet.dataset.initialized = "true";
+
+		var sprite = pet.querySelector(".hu-tao-pet__sprite");
+		var bubble = pet.querySelector("[data-pet-message]");
+		var spritesheet = pet.dataset.spritesheet || "/hu-tao/spritesheet.webp";
+		var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+		var storedEnabled = localStorage.getItem("huTaoPetEnabled");
+		var petEnabled = storedEnabled === null ? true : storedEnabled === "true";
+
+		pet.hidden = !petEnabled;
+		document.documentElement.setAttribute("data-hu-tao-pet-enabled", String(petEnabled));
+
+		function frame(column, row) {
+			return { column: column, row: row };
+		}
+
+		var animations = {
+			idle: [frame(0, 0)],
+			blink: [frame(0, 0), frame(1, 0), frame(1, 0), frame(0, 0)],
+			run: [
+				frame(0, 1), frame(1, 1), frame(2, 1), frame(3, 1),
+				frame(4, 1), frame(5, 1), frame(6, 1), frame(7, 1),
+				frame(0, 2), frame(1, 2), frame(2, 2), frame(3, 2),
+				frame(4, 2), frame(5, 2), frame(6, 2), frame(7, 2),
+			],
+			hello: [
+				frame(0, 3), frame(1, 3), frame(2, 3), frame(3, 3),
+				frame(2, 3), frame(1, 3), frame(0, 3),
+			],
+			bounce: [
+				frame(0, 7), frame(1, 7), frame(2, 7), frame(3, 7),
+				frame(4, 7), frame(5, 7), frame(4, 7), frame(3, 7),
+				frame(2, 7), frame(1, 7), frame(0, 7),
+			],
+			think: [
+				frame(0, 8), frame(1, 8), frame(2, 8), frame(3, 8),
+				frame(4, 8), frame(5, 8), frame(4, 8), frame(3, 8),
+				frame(2, 8), frame(1, 8), frame(0, 8),
+			],
+		};
+
+		var messages = [
+			"嘿嘿，找本堂主有什么事？",
+			"太阳出来我晒太阳，月亮出来我晒月亮。",
+			"别一直盯着屏幕，休息一下。",
+			"需要灵感？本堂主可以帮你敲锣打鼓。",
+			"工作要紧，开心也要紧。",
+		];
+
+		var currentAnimation = "idle";
+		var frameIndex = 0;
+		var lastFrameAt = 0;
+		var frameDelay = 420;
+		var loopAnimation = true;
+		var returnToIdleAt = 0;
+		var nextAmbientAt = 0;
+		var nextBlinkAt = 0;
+		var keepAmbientOnReturn = false;
+		var messageTimer = 0;
+		var dragging = false;
+		var movedDuringDrag = false;
+		var dragOffsetX = 0;
+		var dragOffsetY = 0;
+		var pointerStartX = 0;
+		var pointerStartY = 0;
+
+		pet.style.setProperty("--hu-tao-spritesheet", 'url("' + spritesheet + '")');
+
+		function setFrame(frame) {
+			pet.style.setProperty("--frame-pos-x", -frame.column * 192 + "px");
+			pet.style.setProperty("--frame-pos-y", -frame.row * 208 + "px");
+		}
+
+		function scheduleAmbient(now) {
+			nextAmbientAt = now + 3000 + Math.random() * 2000;
+		}
+
+		function scheduleBlink(now) {
+			nextBlinkAt = now + 2200 + Math.random() * 2200;
+		}
+
+		function playIdle(options) {
+			options = options || {};
+			currentAnimation = "idle";
+			pet.dataset.animation = "idle";
+			frameIndex = 0;
+			frameDelay = 1000;
+			loopAnimation = true;
+			returnToIdleAt = 0;
+			keepAmbientOnReturn = false;
+			setFrame(animations.idle[0]);
+			var now = performance.now();
+			scheduleBlink(now);
+			if (!options.keepAmbient) {
+				scheduleAmbient(now);
+			}
+		}
+
+		function play(name, options) {
+			var frames = animations[name] || animations.idle;
+			options = options || {};
+			currentAnimation = name;
+			pet.dataset.animation = name;
+			frameIndex = 0;
+			frameDelay = options.delay || 420;
+			loopAnimation = options.loop === true;
+			keepAmbientOnReturn = options.keepAmbientOnReturn === true;
+			returnToIdleAt = loopAnimation
+				? 0
+				: performance.now() + frames.length * frameDelay + (options.holdLastFrame || 700);
+			setFrame(frames[0]);
+		}
+
+		function showMessage(text) {
+			if (!bubble || !petEnabled) return;
+			bubble.textContent = text;
+			bubble.hidden = false;
+			window.clearTimeout(messageTimer);
+			messageTimer = window.setTimeout(function () {
+				bubble.hidden = true;
+			}, 2600);
+		}
+
+		function tick(now) {
+			if (!petEnabled) {
+				window.requestAnimationFrame(tick);
+				return;
+			}
+
+			if (!reduceMotion && now - lastFrameAt >= frameDelay) {
+				lastFrameAt = now;
+				var frames = animations[currentAnimation] || animations.idle;
+
+				if (loopAnimation) {
+					frameIndex = (frameIndex + 1) % frames.length;
+					setFrame(frames[frameIndex]);
+				} else if (frameIndex < frames.length - 1) {
+					frameIndex += 1;
+					setFrame(frames[frameIndex]);
+				} else if (returnToIdleAt && now >= returnToIdleAt) {
+					playIdle({ keepAmbient: keepAmbientOnReturn });
+				}
+
+				if (!dragging && currentAnimation === "idle" && now >= nextBlinkAt) {
+					play("blink", { delay: 140, holdLastFrame: 80, keepAmbientOnReturn: true });
+				} else if (!dragging && currentAnimation === "idle" && now >= nextAmbientAt) {
+					var ambient = ["hello", "think", "bounce"];
+					play(ambient[Math.floor(Math.random() * ambient.length)], { delay: 240, holdLastFrame: 650 });
+				}
+			}
+
+			window.requestAnimationFrame(tick);
+		}
+
+		function setPetEnabled(enabled) {
+			petEnabled = enabled;
+			pet.hidden = !enabled;
+			document.documentElement.setAttribute("data-hu-tao-pet-enabled", String(enabled));
+			if (!enabled) {
+				dragging = false;
+				pet.classList.remove("is-dragging");
+				if (bubble) {
+					bubble.hidden = true;
+				}
+			} else {
+				playIdle();
+			}
+		}
+
+		function clamp(value, min, max) {
+			return Math.min(max, Math.max(min, value));
+		}
+
+		function moveTo(clientX, clientY) {
+			var rect = pet.getBoundingClientRect();
+			var nextLeft = clamp(clientX - dragOffsetX, 0, window.innerWidth - rect.width);
+			var nextTop = clamp(clientY - dragOffsetY, 0, window.innerHeight - rect.height);
+			pet.style.left = nextLeft + "px";
+			pet.style.top = nextTop + "px";
+			pet.style.right = "auto";
+			pet.style.bottom = "auto";
+		}
+
+		sprite.addEventListener("pointerdown", function (event) {
+			dragging = true;
+			movedDuringDrag = false;
+			pet.classList.add("is-dragging");
+			var rect = pet.getBoundingClientRect();
+			dragOffsetX = event.clientX - rect.left;
+			dragOffsetY = event.clientY - rect.top;
+			pointerStartX = event.clientX;
+			pointerStartY = event.clientY;
+			sprite.setPointerCapture(event.pointerId);
+		});
+
+		sprite.addEventListener("pointermove", function (event) {
+			if (!dragging) return;
+			if (!movedDuringDrag) {
+				var distance = Math.hypot(event.clientX - pointerStartX, event.clientY - pointerStartY);
+				if (distance < 5) return;
+				movedDuringDrag = true;
+				play("run", { delay: 150, loop: true });
+			}
+			moveTo(event.clientX, event.clientY);
+		});
+
+		sprite.addEventListener("pointerup", function (event) {
+			if (!dragging) return;
+			dragging = false;
+			pet.classList.remove("is-dragging");
+			sprite.releasePointerCapture(event.pointerId);
+			if (movedDuringDrag) {
+				play("bounce", { delay: 200, holdLastFrame: 450 });
+			} else {
+				playIdle();
+			}
+		});
+
+		sprite.addEventListener("pointercancel", function () {
+			dragging = false;
+			pet.classList.remove("is-dragging");
+			playIdle();
+		});
+
+		sprite.addEventListener("click", function () {
+			if (!petEnabled) return;
+			if (movedDuringDrag) {
+				movedDuringDrag = false;
+				return;
+			}
+
+			showMessage(messages[Math.floor(Math.random() * messages.length)]);
+			play("hello", { delay: 220, holdLastFrame: 700 });
+		});
+
+		window.addEventListener("huTaoPetToggle", function (event) {
+			setPetEnabled(Boolean(event.detail && event.detail.enabled));
+		});
+
+		playIdle();
+		window.requestAnimationFrame(tick);
+	})();
+</script>

@@ -571,6 +571,15 @@ const siteLang = lang.replace("_", "-");
           document.documentElement.setAttribute("data-banner-title-enabled", bannerTitleEnabled);
         }
       })();
+
+      // 初始化胡桃桌宠显示状态
+      (function applyHuTaoPetEnabled() {
+        const huTaoPetEnabled = localStorage.getItem("huTaoPetEnabled");
+        document.documentElement.setAttribute(
+          "data-hu-tao-pet-enabled",
+          huTaoPetEnabled === null ? "true" : huTaoPetEnabled
+        );
+      })();
     </script>
     <style
       define:vars={{

@@ -1343,6 +1343,42 @@ export function setSakuraEnabled(enabled: boolean): void {
 	);
 }
 
+// Hu Tao desktop pet functions
+export function getDefaultHuTaoPetEnabled(): boolean {
+	return true;
+}
+
+export function getStoredHuTaoPetEnabled(): boolean {
+	if (
+		typeof localStorage === "undefined" ||
+		typeof localStorage.getItem !== "function"
+	) {
+		return getDefaultHuTaoPetEnabled();
+	}
+	const stored = localStorage.getItem("huTaoPetEnabled");
+	if (stored === null) {
+		return getDefaultHuTaoPetEnabled();
+	}
+	return stored === "true";
+}
+
+export function setHuTaoPetEnabled(enabled: boolean): void {
+	if (
+		typeof localStorage === "undefined" ||
+		typeof localStorage.setItem !== "function"
+	) {
+		return;
+	}
+	localStorage.setItem("huTaoPetEnabled", String(enabled));
+	document.documentElement.setAttribute(
+		"data-hu-tao-pet-enabled",
+		String(enabled),
+	);
+	window.dispatchEvent(
+		new CustomEvent("huTaoPetToggle", { detail: { enabled } }),
+	);
+}
+
 // Banner title functions
 export function getDefaultBannerTitleEnabled(): boolean {
 	return backgroundWallpaper.common?.homeText?.enable ?? true;

@@ -13,6 +13,7 @@ import {
 	getDefaultDesktopWallpaperStyle,
 	getDefaultGradientEnabled,
 	getDefaultHue,
+	getDefaultHuTaoPetEnabled,
 	getDefaultOverlayBlur,
 	getDefaultOverlayCardOpacity,
 	getDefaultOverlayOpacity,
@@ -23,6 +24,7 @@ import {
 	getStoredBannerTitleEnabled,
 	getStoredDesktopWallpaperStyle,
 	getStoredGradientEnabled,
+	getStoredHuTaoPetEnabled,
 	getStoredOverlayBlur,
 	getStoredOverlayCardOpacity,
 	getStoredOverlayOpacity,
@@ -34,6 +36,7 @@ import {
 	setDesktopWallpaperStyle,
 	setGradientEnabled,
 	setHue,
+	setHuTaoPetEnabled,
 	setOverlayBlur,
 	setOverlayCardOpacity,
 	setOverlayOpacity,
@@ -44,8 +47,8 @@ import {
 import { onMount } from "svelte";
 import Icon from "@/components/common/Icon.svelte";
 import { backgroundWallpaper, sakuraConfig, siteConfig } from "@/config";
-import type { DesktopWallpaperStyle } from "@/utils/setting-utils";
 import type { WALLPAPER_MODE } from "@/types/config";
+import type { DesktopWallpaperStyle } from "@/utils/setting-utils";
 
 type OverlaySliderItem = {
 	key: "opacity" | "blur" | "cardOpacity";
@@ -90,6 +93,8 @@ let desktopWallpaperStyle: DesktopWallpaperStyle = $state(
 const defaultDesktopWallpaperStyle = getDefaultDesktopWallpaperStyle();
 let sakuraEnabled = $state(true);
 const defaultSakuraEnabled = getDefaultSakuraEnabled();
+let huTaoPetEnabled = $state(true);
+const defaultHuTaoPetEnabled = getDefaultHuTaoPetEnabled();
 let overlayOpacity = $state(getDefaultOverlayOpacity());
 const defaultOverlayOpacity = getDefaultOverlayOpacity();
 let overlayBlur = $state(getDefaultOverlayBlur());
@@ -122,6 +127,7 @@ const isBannerCarouselSwitchable =
 const isDesktopWallpaperStyleSwitchable = true;
 // 是否允许用户切换樱花特效
 const isSakuraSwitchable = sakuraConfig?.switchable ?? false;
+const isHuTaoPetSwitchable = true;
 // 是否有任何横幅设置可显示（后续添加新设置时在此处添加条件）
 const hasBannerSettings =
 	isDesktopWallpaperStyleSwitchable ||
@@ -173,7 +179,8 @@ const hasAnyContent =
 	allowLayoutSwitch ||
 	hasBannerSettings ||
 	hasOverlaySettings ||
-	isSakuraSwitchable;
+	isSakuraSwitchable ||
+	isHuTaoPetSwitchable;
 
 let overlaySliderItems = $derived<OverlaySliderItem[]>([
 	{
@@ -303,6 +310,17 @@ function resetOverlaySettings() {
 	requestAnimationFrame(refreshAllRangeProgress);
 }
 
+function resetEffectsSettings() {
+	if (isSakuraSwitchable && sakuraEnabled !== defaultSakuraEnabled) {
+		sakuraEnabled = defaultSakuraEnabled;
+		setSakuraEnabled(defaultSakuraEnabled);
+	}
+	if (isHuTaoPetSwitchable && huTaoPetEnabled !== defaultHuTaoPetEnabled) {
+		huTaoPetEnabled = defaultHuTaoPetEnabled;
+		setHuTaoPetEnabled(defaultHuTaoPetEnabled);
+	}
+}
+
 function toggleWavesEnabled() {
 	wavesEnabled = !wavesEnabled;
 	setWavesEnabled(wavesEnabled);
@@ -331,6 +349,11 @@ function switchDesktopWallpaperStyle(style: DesktopWallpaperStyle) {
 function toggleSakuraEnabled() {
 	sakuraEnabled = !sakuraEnabled;
 	setSakuraEnabled(sakuraEnabled);
+}
+
+function toggleHuTaoPetEnabled() {
+	huTaoPetEnabled = !huTaoPetEnabled;
+	setHuTaoPetEnabled(huTaoPetEnabled);
 }
 
 function switchWallpaperMode(newMode: WALLPAPER_MODE) {
@@ -420,6 +443,9 @@ onMount(() => {
 
 	// 从localStorage读取樱花特效状态
 	sakuraEnabled = getStoredSakuraEnabled();
+
+	// 从localStorage读取桌宠状态
+	huTaoPetEnabled = getStoredHuTaoPetEnabled();
 
 	// 从localStorage读取全屏透明设置状态
 	overlayOpacity = getStoredOverlayOpacity();
@@ -761,7 +787,7 @@ $effect(() => {
     {/if}
 
     <!-- Effects Settings Section -->
-    {#if isSakuraSwitchable}
+    {#if isSakuraSwitchable || isHuTaoPetSwitchable}
         <div class="mt-2 mb-2">
             <div class="flex gap-2 font-bold text-lg text-neutral-900 dark:text-neutral-100 transition relative ml-3 mb-2
                 before:w-1 before:h-4 before:rounded-md before:bg-(--primary)
@@ -769,13 +795,33 @@ $effect(() => {
             >
                 {i18n(I18nKey.effectsSettings)}
                 <button aria-label="Reset to Default" class="btn-regular w-7 h-7 rounded-md  active:scale-90"
-                        class:opacity-0={sakuraEnabled === defaultSakuraEnabled} class:pointer-events-none={sakuraEnabled === defaultSakuraEnabled} onclick={() => { sakuraEnabled = defaultSakuraEnabled; setSakuraEnabled(defaultSakuraEnabled); }}>
+                        class:opacity-0={(!isSakuraSwitchable || sakuraEnabled === defaultSakuraEnabled) && (!isHuTaoPetSwitchable || huTaoPetEnabled === defaultHuTaoPetEnabled)}
+                        class:pointer-events-none={(!isSakuraSwitchable || sakuraEnabled === defaultSakuraEnabled) && (!isHuTaoPetSwitchable || huTaoPetEnabled === defaultHuTaoPetEnabled)}
+                        onclick={resetEffectsSettings}>
                     <div class="text-(--btn-content)">
                         <Icon icon="fa7-solid:arrow-rotate-left" class="text-[0.875rem]"></Icon>
                     </div>
                 </button>
             </div>
             <div class="space-y-1">
+                {#if isHuTaoPetSwitchable}
+                <button
+                    class="w-full btn-regular rounded-md py-2 px-3 flex items-center gap-3 text-left active:scale-95 transition-all relative overflow-hidden"
+                    class:bg-(--btn-regular-bg-hover)={huTaoPetEnabled}
+                    onclick={toggleHuTaoPetEnabled}
+                >
+                    <Icon icon="material-symbols:smart-toy-outline" class="text-[1.25rem] shrink-0"></Icon>
+                    <span class="text-sm flex-1">桌宠</span>
+                    <div class="w-10 h-5 rounded-full transition-all duration-200 relative"
+                         class:bg-(--primary)={huTaoPetEnabled}
+                         class:bg-(--btn-regular-bg-active)={!huTaoPetEnabled}>
+                        <div class="absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-all duration-200"
+                             class:left-0.5={!huTaoPetEnabled}
+                             class:left-5={huTaoPetEnabled}></div>
+                    </div>
+                </button>
+                {/if}
+                {#if isSakuraSwitchable}
                 <button
                     class="w-full btn-regular rounded-md py-2 px-3 flex items-center gap-3 text-left active:scale-95 transition-all relative overflow-hidden"
                     class:bg-(--btn-regular-bg-hover)={sakuraEnabled}
@@ -791,6 +837,7 @@ $effect(() => {
                              class:left-5={sakuraEnabled}></div>
                     </div>
                 </button>
+                {/if}
             </div>
         </div>
     {/if}
