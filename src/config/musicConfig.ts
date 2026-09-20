@@ -82,9 +82,9 @@ export const musicPlayerConfig: MusicPlayerConfig = {
 				lrc: "",
 			},
 			{
-				name: "霜雪千年",
+				name: "世末歌者",
 				artist: "双笙（陈元汐）, 封茗囧菌",
-				url: "/assets/music/双笙（陈元汐）, 封茗囧菌 - 霜雪千年.mp3",
+				url: "/assets/music/双笙（陈元汐）, 封茗囧菌 - 世末歌者（Cover 乐正绫）.mp3",
 				cover: "/assets/music/cover/5.jpg",
 				lrc: "",
 			},
