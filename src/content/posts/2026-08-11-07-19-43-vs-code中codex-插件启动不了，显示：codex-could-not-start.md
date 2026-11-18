@@ -6,6 +6,7 @@ draft: false
 description: |-
   弹窗Codex could not start
   The extension couldn't load its resources.
+image: /uploads/【哲风壁纸】侧脸-氛围感-清冷.jpg
 tags:
   - Codex
 category: Ai工具
